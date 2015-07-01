@@ -101,6 +101,10 @@ function plugin(options, imports, register) {
                 type: "string",
                 source: "body",
                 optional: false
+            },
+            "access_token": {
+                type: "string",
+                source: "query"
             }
         }
     }, [
@@ -319,8 +323,45 @@ function plugin(options, imports, register) {
             entry.vfs.handleEngine(req, res, next);
         }
     ]);
+
+    section.all("/:vfsid/sandbox", {
+        params: {
+            vfsid: {
+                type: "vfsid"
+            },
+            id: {
+                source: "body",
+                type: "number"
+            },
+            method: {
+                source: "body",
+                type: "string"
+            },
+            params: {
+                source: "body",
+                type: "array"
+            }
+        }
+    }, [
+        requestTimeout(1*60*1000),
+        function handleSandbox(req, res, next) {
+            var vfsid = req.params.vfsid;
+            
+            var entry = cache.get(vfsid);
+            if (!entry) {
+                var err = new error.PreconditionFailed("VFS connection does not exist");
+                err.code = 499;
+                return next(err);
+            }
+
+            entry.vfs.handleSandbox(req, res, next);
+        }
+    ]);
     
     function trackActivity(user, cookies) {
+        // Don't track activity;
+        return;
+        
         if (user.id === -1)
             return;
 
