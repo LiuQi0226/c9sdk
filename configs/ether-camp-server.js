@@ -148,6 +148,7 @@ module.exports = function(config, optimist) {
                 "saucelabs.preview": true,
                 "ethergit.solidity.language": true,
                 "ethergit.solidity.compiler": true,
+                "ethergit.libs": true,
                 "ethergit.sandbox": true,
                 "ethergit.ethereum.sandbox": true,
                 "ethergit.guests.count": true,

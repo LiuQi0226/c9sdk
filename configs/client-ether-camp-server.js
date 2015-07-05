@@ -701,6 +701,7 @@ module.exports = function(options) {
             packagePath: "plugins/ethergit.solidity.language/solidity",
             readonly: false
         },
+        "plugins/ethergit.libs/libs",
         "plugins/ethergit.solidity.compiler/compiler",
         "plugins/ethergit.sandbox/sandbox",
         "plugins/ethergit.ethereum.sandbox/sandbox",
