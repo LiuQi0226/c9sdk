@@ -20,6 +20,7 @@
     "engine.io": "~1.5.1",
     "engine.io-client": "~1.5.1",
     "eslint": "git://github.com/cloud9ide/eslint.git#dc500e81162bf0cb4747a4a415c121b0c46975cb",
+    "ethereumjs-lib": "^0.3.1",
     "form-data": "~0.2.0",
     "http-error": "~0.0.5",
     "less": "^2.4.0",
