@@ -713,6 +713,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/pkey_dialog",
         "plugins/ethergit.ethereum.sandbox/idle_detector",
         "plugins/ethergit.ethereum.sandbox/stablenet_log",
+        "plugins/ethergit.ethereum.sandbox/console",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
