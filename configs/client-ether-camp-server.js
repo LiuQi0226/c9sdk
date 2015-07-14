@@ -707,7 +707,6 @@ module.exports = function(options) {
         "plugins/ethergit.libs/libs",
         "plugins/ethergit.solidity.compiler/compiler",
         "plugins/ethergit.sandbox/sandbox",
-        "plugins/ethergit.ethereum.sandbox/sandbox",
         "plugins/ethergit.ethereum.sandbox/sandbox_panel",
         "plugins/ethergit.ethereum.sandbox/transactions_dialog",
         "plugins/ethergit.ethereum.sandbox/transaction_dialog",
@@ -717,7 +716,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/idle_detector",
         "plugins/ethergit.ethereum.sandbox/stablenet_log",
         "plugins/ethergit.ethereum.sandbox/console",
-        //"plugins/ethergit.ethereum.sandbox/sandbox_control",
+        "plugins/ethergit.ethereum.sandbox/sandbox_control",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
