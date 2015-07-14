@@ -302,6 +302,9 @@ module.exports = function(options) {
         {
             packagePath: "plugins/c9.ide.language/language",
             workspaceDir: workspaceDir,
+            staticPrefix: hosted && !options.packed
+                ? options.ideBaseUrl + "/uph" + staticPrefix
+                : staticPrefix,
             workerPrefix: options.CORSWorkerPrefix // "/static/standalone/worker"
         },
         "plugins/c9.ide.language/keyhandler",
@@ -714,6 +717,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/idle_detector",
         "plugins/ethergit.ethereum.sandbox/stablenet_log",
         "plugins/ethergit.ethereum.sandbox/console",
+        //"plugins/ethergit.ethereum.sandbox/sandbox_control",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
