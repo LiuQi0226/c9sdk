@@ -717,6 +717,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/stablenet_log",
         "plugins/ethergit.ethereum.sandbox/console",
         "plugins/ethergit.ethereum.sandbox/sandbox_control",
+        "plugins/ethergit.ethereum.sandbox/config",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
