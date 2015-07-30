@@ -706,7 +706,7 @@ module.exports = function(options) {
         },
         "plugins/ethergit.libs/libs",
         "plugins/ethergit.solidity.compiler/compiler",
-        "plugins/ethergit.sandbox/sandbox",
+        "plugins/ethergit.ethereum.sandbox/sandbox",
         "plugins/ethergit.ethereum.sandbox/sandbox_panel",
         "plugins/ethergit.ethereum.sandbox/transactions_dialog",
         "plugins/ethergit.ethereum.sandbox/transaction_dialog",
