@@ -718,6 +718,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/console",
         "plugins/ethergit.ethereum.sandbox/sandbox_control",
         "plugins/ethergit.ethereum.sandbox/config",
+        "plugins/ethergit.ethereum.sandbox/contract_constructor_dialog",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
