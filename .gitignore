@@ -10,7 +10,9 @@ plugins/c9.vfs.standalone/www/charts
 plugins/c9.ide.language.javascript.tern/util/sigs_ts
 plugins/c9.account.billing/node_modules/
 plugins/c9.account/node_modules/
+plugins/c9.react/node_modules/
 plugins/c9.api.project/coverage/
+plugins/c9.api.user/coverage/
 plugins/c9.proxy.apps/coverage/
 plugins/c9.db.redis/coverage/
 scripts/build
@@ -30,6 +32,7 @@ node_modules/*
 !node_modules/c9
 !node_modules/frontdoor
 !node_modules/kaefer
+!node_modules/verify-bot
 node_modules/kaefer/node_modules/
 !node_modules/nak
 !node_modules/pivottable
@@ -40,6 +43,7 @@ node_modules/kaefer/node_modules/
 !node_modules/ui
 !node_modules/react-bootstrap
 !node_modules/oldclient
+!node_modules/vargs
 
 node_modules/oldclient/node_modules
 node_modules/oldclient/plugins-server/c9.api.project/tmp*

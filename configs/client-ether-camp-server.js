@@ -722,6 +722,13 @@ module.exports = function(options) {
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
+
+    if (options.standalone || options.local) {
+        plugins.push(
+            "plugins/c9.ide.scm/status",
+            "plugins/c9.ide.scm/editor"
+        );
+    }
     
     if (packaging || !devel) {
         plugins.push({

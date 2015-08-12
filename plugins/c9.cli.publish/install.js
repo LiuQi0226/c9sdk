@@ -109,10 +109,11 @@ define(function(require, exports, module) {
                     }
                     
                     var name = argv._[1];
+                    
                     var test = name == ".";
                     if (test)
                         name = require("path").basename(process.cwd());
-                    
+                        
                     install(
                         name,
                         {
@@ -223,7 +224,7 @@ define(function(require, exports, module) {
             var version = parts[1];
             var repository;
             
-            if ((!version || options.debug) && !options.test) {
+            if (!options.test) {
                 if (verbose)
                     console.log("Retrieving package info");
                     
@@ -232,8 +233,10 @@ define(function(require, exports, module) {
                     
                     if (verbose)
                         console.log("Found:", info);
+                    
+                    if (!version)
+                        version = info.latest;
                         
-                    version = info.latest;
                     repository = info.repository;
                     
                     installPackage();
@@ -291,12 +294,21 @@ define(function(require, exports, module) {
                 
                 prepareDirectory(function(err, packagePath){
                     if (err) return callback(err);
-                    
+                    var npmBin = [
+                        join(process.env.HOME, process.platform == "win32"? ".c9/npm.cmd" : ".c9/node/bin/npm"),
+                        "/mnt/shared/sbin/npm"
+                    ];
                     function installNPM(){
-                        spawn(join(process.env.HOME, process.platform == "win32"? ".c9/npm.cmd" : ".c9/node/bin/npm"), {
+                        spawn(npmBin[0], {
                             args: ["install"],
                             cwd: packagePath
                         }, function(err) {
+                            if (err && err.code == 127) {
+                                npmBin.shift();
+                                if (npmBin.length)
+                                    return installNPM();
+                            }
+                            
                             if (err) return callback(err);
                             callback(null, { version: version });
                         });
@@ -353,7 +365,9 @@ define(function(require, exports, module) {
                     
                     request.on('response', function(res) {
                         if (res.statusCode != 200)
-                            return callback(new Error("Unknown Error:" + res.statusCode));
+                            return callback(new Error("Unknown Error getting " 
+                                + host + (port  ? ":" + port : "") 
+                                + path + ":" + res.statusCode));
                     });
                     
                     file.on('finish', function() {
@@ -442,10 +456,10 @@ define(function(require, exports, module) {
                             return callback(null, { version: "test" });
                             
                         if (verbose)
-                            console.log("Notifying c9.io that packages needs to be installed");
+                            console.log("Notifying c9.io that package is installed");
                         
                         var endpoint = options.global ? api.user : api.project;
-                        var url = "install/" + packageName + "/" + version + "?mode=silent";
+                        var url = "install/" + name + "/" + version + "?mode=silent";
                         
                         endpoint.post(url, function(err, info){
                             callback(err, info);
