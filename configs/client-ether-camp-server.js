@@ -711,7 +711,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/transactions_dialog",
         "plugins/ethergit.ethereum.sandbox/transaction_dialog",
         "plugins/ethergit.ethereum.sandbox/contract_dialog",
-        "plugins/ethergit.ethereum.sandbox/new_tx_dialog",
+        "plugins/ethergit.ethereum.sandbox/new_tx_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/pkey_dialog",
         "plugins/ethergit.ethereum.sandbox/idle_detector",
         "plugins/ethergit.ethereum.sandbox/stablenet_log",
