@@ -147,7 +147,6 @@ define(function(require, exports, module) {
                 var isDir = path[path.length-1] == "/";
                 if (isDir || parsedUrl.pathname.match(/\.html?$/i)) {
                     req.headers["accept-encoding"] = "identity";
-                    delete req.headers["if-none-match"];
                     delete req.headers["if-range"];
                 } else {
                     req.headers["accept-encoding"] = "gzip";
@@ -315,6 +314,7 @@ define(function(require, exports, module) {
                             "content-type": request.headers["content-type"],
                             "etag": request.headers.etag,
                             "date": request.headers.date,
+                            "x-robots-tag": "noindex, nofollow",
                             "access-control-allow-origin": "https://ide." + ideHost
                         });
                         res.write(data);
@@ -325,6 +325,9 @@ define(function(require, exports, module) {
                 
                 function serveFile(request) {
                     debug("forward file %s", request.url);
+                    request.headers["x-robots-tag"] = "noindex, nofollow";
+                    if (!request.headers["Cache-Control"])
+                        request.headers["Cache-Control"] = "max-age=31536000,no-cache";
                     res.writeHead(request.statusCode, request.headers);
                     request.pipe(res);
                 }

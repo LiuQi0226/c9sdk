@@ -706,20 +706,30 @@ module.exports = function(options) {
         },
         "plugins/ethergit.libs/libs",
         "plugins/ethergit.solidity.compiler/compiler",
-        "plugins/ethergit.sandbox/sandbox",
+        "plugins/ethergit.ethereum.sandbox/sandbox",
         "plugins/ethergit.ethereum.sandbox/sandbox_panel",
         "plugins/ethergit.ethereum.sandbox/transactions_dialog",
         "plugins/ethergit.ethereum.sandbox/transaction_dialog",
         "plugins/ethergit.ethereum.sandbox/contract_dialog",
-        "plugins/ethergit.ethereum.sandbox/new_tx_dialog",
+        "plugins/ethergit.ethereum.sandbox/new_tx_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/pkey_dialog",
         "plugins/ethergit.ethereum.sandbox/idle_detector",
         "plugins/ethergit.ethereum.sandbox/stablenet_log",
         "plugins/ethergit.ethereum.sandbox/console",
         "plugins/ethergit.ethereum.sandbox/sandbox_control",
+        "plugins/ethergit.ethereum.sandbox/config",
+        "plugins/ethergit.ethereum.sandbox/contract_constructor_dialog",
+        "plugins/ethergit.ethereum.sandbox/account_dialog",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
+
+    if (options.standalone || options.local) {
+        plugins.push(
+            "plugins/c9.ide.scm/status",
+            "plugins/c9.ide.scm/editor"
+        );
+    }
     
     if (packaging || !devel) {
         plugins.push({
