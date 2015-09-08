@@ -1,7 +1,7 @@
 /*global describe it before after beforeEach afterEach define*/
 "use strict";
 "use server";
-"use mocha";
+
 "use blacklist";
 
 require("c9/inline-mocha")(module);
@@ -236,7 +236,7 @@ describe("cli.publish", function(){
         });
     });
     
-    describe.only("install and remove (uninstall)", function() {
+    describe("install and remove (uninstall)", function() {
         var pluginDir = join(process.env.HOME, ".c9/plugins/c9.ide.example");
         
         // Lets make sure there is at least one package in the database

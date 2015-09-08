@@ -56,7 +56,7 @@ define(function(require, exports, module) {
                 container = new ui.bar({ 
                     htmlNode: htmlNode || document.body,
                     "class"  : options.className,
-                    style: options.style
+                    style: options.style || ""
                 });
                 plugin.addElement(container);
                 
@@ -380,6 +380,29 @@ define(function(require, exports, module) {
                             })
                         ];
                     break;
+                    case "textarea-row":
+                        // TODO this should be ace
+                        node = new ui.vsplitbox({
+                            options: options,
+                            height: options.rowheight || rowheight,
+                            edge: options.edge || edge,
+                            type: options.type,
+                            childNodes: [
+                                new ui.label({ height: 40, caption: name + ":" }),
+                                new ui.textarea({
+                                    width: options.width || widths.textarea,
+                                    height: options.height || 200,
+                                    style: options.fixedFont
+                                        ? "font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace; font-size: 10px"
+                                        : "",
+                                    value: options.path 
+                                        ? createBind(options.path) 
+                                        : (options.defaultValue || ""),
+                                    realtime: typeof options.realtime !== "undefined" ? options.realtime : 1
+                                })
+                            ]
+                        });
+                    break;
                     case "custom":
                         node = options.node;
                     break;
@@ -454,9 +477,13 @@ define(function(require, exports, module) {
                     container.parentNode = htmlNode;
                     htmlNode = htmlNode.$int;
                 }
-                
-                htmlNode.insertBefore(container.$ext, beforeNode || null);
-                emit("show");
+                // if we have apf node, make sure apf child-parent links do not get broken
+                if (htmlNode.host && container.host) {
+                    htmlNode.host.insertBefore(container.host, beforeNode && beforeNode.host);
+                } else {
+                    htmlNode.insertBefore(container.$ext, beforeNode || null);
+                }
+                show();
             }
             
             function detach(){
@@ -467,6 +494,11 @@ define(function(require, exports, module) {
             function toJson(amlNode, json) {
                 if (!json)
                     json = {};
+                
+                if (!drawn) {
+                    draw();
+                    hide();
+                }
                 
                 (amlNode || container).childNodes.forEach(function(row) {
                     if (row.localName == 'bar')

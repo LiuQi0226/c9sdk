@@ -376,14 +376,14 @@
     padding-right: 0;
 }
 
-.filetree.ace_tree_focus .selected .extrainfo{
+.ace_tree.ace_tree_focus .selected .extrainfo{
     color: #FFFFFF;
     .font-smoothing(true);
 }
 
 .loading-spinner {
     .image-2x("/static/@{pane-button-save-image}", @pane-button-save-image-width, @pane-button-save-image-height);
-    .animation(~"loading-24-spinner 1.2s steps(24, end) infinite");
+    .animation(~"loading-24-spinner 1.2s steps(24) infinite")!important;
 }
 
 .searchresults .item{
@@ -409,6 +409,20 @@
 }
 .installer .execute .progress{
     bottom: -44px;
+}
+
+.has_apf .toolbar-top .sbtb_middle{
+    height: auto;
+    padding: 4px 25px 3px 5px;
+}
+
+.top-test-panel{
+    border-bottom: 1px solid @border-highlight-dark;
+    box-shadow: none;
+}
+
+.runner-form-header{
+    border-bottom: 1px solid @border-highlight-dark;
 }
 
 @media print, (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 1.25dppx) {
