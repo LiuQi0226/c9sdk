@@ -725,6 +725,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/contract_constructor_dialog",
         "plugins/ethergit.ethereum.sandbox/account_dialog",
         "plugins/ethergit.ethereum.sandbox/abi_dialog/dialog",
+        "plugins/ethergit.ethereum.sandbox/send_to_net_dialog/dialog",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.preview.browser.sandbox/browser"
     ];
