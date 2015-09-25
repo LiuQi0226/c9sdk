@@ -687,6 +687,7 @@ module.exports = function(options) {
             basePath: workspaceDir,
             local: options.local
         },
+        "plugins/c9.ide.preferences/experimental",
         {
             packagePath: "plugins/c9.ide.login/login",
             staticPrefix: staticPrefix + "/plugins/c9.ide.login",
@@ -703,6 +704,15 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.collab/notifications/bubble",
             staticPrefix: staticPrefix + "/plugins/c9.ide.collab/notifications"
         },
+
+        // git integration
+        "plugins/c9.ide.scm/scm",
+        "plugins/c9.ide.scm/scmpanel",
+        "plugins/c9.ide.scm/detail",
+        "plugins/c9.ide.scm/log",
+        "plugins/c9.ide.scm/git",
+        "plugins/c9.ide.scm/editor",
+      
         // Ethergit plugins
         {
             packagePath: "plugins/ethergit.solidity.language/solidity",
@@ -746,13 +756,6 @@ module.exports = function(options) {
             "plugins/c9.ide.test/coverageview",
             
             "plugins/c9.ide.test.mocha/mocha"
-        );
-    }
-
-    if (options.standalone || options.local) {
-        plugins.push(
-            "plugins/c9.ide.scm/status",
-            "plugins/c9.ide.scm/editor"
         );
     }
     
