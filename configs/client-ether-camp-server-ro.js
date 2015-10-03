@@ -544,8 +544,7 @@ module.exports = function(options) {
         "plugins/ethergit.libs/libs",
         "plugins/ethergit.solidity.compiler/compiler",
         "plugins/ethergit.ethereum.sandbox/idle_detector",
-        "plugins/ethergit.guests.count/guests_count",
-        "plugins/ethergit.preview.browser.sandbox/browser"
+        "plugins/ethergit.guests.count/guests_count"
     ];
     
     if (packaging || !devel) {

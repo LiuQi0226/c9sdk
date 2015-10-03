@@ -160,10 +160,8 @@ module.exports = function(config, optimist) {
                 "ethergit.solidity.language": true,
                 "ethergit.solidity.compiler": true,
                 "ethergit.libs": true,
-                "ethergit.sandbox": true,
                 "ethergit.ethereum.sandbox": true,
-                "ethergit.guests.count": true,
-                "ethergit.preview.browser.sandbox": true
+                "ethergit.guests.count": true
             }
         },
         "./c9.preview/statics",
