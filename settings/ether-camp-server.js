@@ -107,8 +107,8 @@ module.exports = function(manifest, installPath) {
             pubkey: null
         },
         project: {
-            id: 1,
-            name: "projectname",
+          id: process.env.PROJECT_ID || 1,
+            name: process.env.PROJECT_NAME || "projectname",
             contents: null,
             descr: "descr"
         },
