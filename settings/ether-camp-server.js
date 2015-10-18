@@ -62,7 +62,7 @@ module.exports = function(manifest, installPath) {
         ideBaseUrl: "http://c9.io",
         previewUrl: "/preview",
         dashboardUrl: "https://c9.io/dashboard.html",
-        apiUrl: "http://auth.ether.camp",
+        apiUrl: "http://dev.auth.ether.camp",
         homeUrl: "/home",
         collab: true,
         installed: true,
