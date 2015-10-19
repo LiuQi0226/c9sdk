@@ -96,7 +96,7 @@ module.exports = function(options) {
             updateServers: hosted
         },
         {
-            packagePath: "plugins/c9.ide.auth/auth",
+            packagePath: "plugins/ethergit.ethereum.sandbox/auth/auth",
             accessToken: options.accessToken || "token",
             ideBaseUrl: options.ideBaseUrl,
             apiUrl: options.apiUrl,

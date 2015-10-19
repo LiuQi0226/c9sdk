@@ -125,7 +125,7 @@ module.exports = function(options) {
                 || options.mode === "beta" && "beta"
         },
         {
-            packagePath: "plugins/c9.ide.auth/auth",
+            packagePath: "plugins/ethergit.ethereum.sandbox/auth/auth",
             accessToken: options.accessToken || "token",
             ideBaseUrl: options.ideBaseUrl,
             apiUrl: options.apiUrl,
