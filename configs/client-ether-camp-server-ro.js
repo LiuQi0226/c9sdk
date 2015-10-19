@@ -510,8 +510,8 @@ module.exports = function(options) {
         },
         "plugins/c9.ide.browsersupport/browsersupport",
         {
-            packagePath: "plugins/c9.ide.login/login",
-            staticPrefix: staticPrefix + "/plugins/c9.ide.login",
+            packagePath: "plugins/ethergit.ethereum.sandbox/login/login",
+            staticPrefix: staticPrefix + "/plugins/ethergit.ethereum.sandbox",
             ideBaseUrl: options.ideBaseUrl,
             dashboardUrl: options.dashboardUrl,
             accountUrl: options.accountUrl,
