@@ -737,6 +737,10 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/abi_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/send_to_net_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor",
+        {
+            packagePath: "plugins/ethergit.ethereum.sandbox/login_dialog/dialog",
+            apiUrl: options.apiUrl
+        },
         "plugins/ethergit.guests.count/guests_count"
     ];
      

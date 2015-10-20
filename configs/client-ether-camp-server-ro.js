@@ -544,6 +544,10 @@ module.exports = function(options) {
         "plugins/ethergit.libs/libs",
         "plugins/ethergit.solidity.compiler/compiler",
         "plugins/ethergit.ethereum.sandbox/idle_detector",
+        {
+            packagePath: "plugins/ethergit.ethereum.sandbox/login_dialog/dialog",
+            apiUrl: options.apiUrl
+        },
         "plugins/ethergit.guests.count/guests_count"
     ];
     
