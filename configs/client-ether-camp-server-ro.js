@@ -548,7 +548,8 @@ module.exports = function(options) {
             packagePath: "plugins/ethergit.ethereum.sandbox/login_dialog/dialog",
             apiUrl: options.apiUrl
         },
-        "plugins/ethergit.guests.count/guests_count"
+        "plugins/ethergit.ethereum.sandbox/guest_pane_resize_fix",
+        "plugins/ethergit.guests.count/guests_count",
     ];
     
     if (packaging || !devel) {
