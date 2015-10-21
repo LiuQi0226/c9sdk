@@ -122,7 +122,8 @@ module.exports = function(options) {
             servers: options.vfsServers,
             updateServers: hosted,
             strictRegion: options.strictRegion
-                || options.mode === "beta" && "beta"
+                || options.mode === "beta" && "beta",
+            ignoreProtocolVersion: options.ignoreProtocolVersion,
         },
         {
             packagePath: "plugins/c9.ide.auth/auth",
@@ -218,7 +219,6 @@ module.exports = function(options) {
             nak: options.nakBin || "~/.c9/node_modules/nak/bin/nak",
             node: options.nodeBin,
             local: options.local,
-            installPath: options.installPath
         },
         {
             packagePath: "plugins/c9.ide.find.infiles/findinfiles",
@@ -277,7 +277,7 @@ module.exports = function(options) {
         
         // VFS
         "plugins/c9.fs/proc",
-        "plugins/c9.fs/proc.apigen",
+        "plugins/c9.fs/proc.apigen", // used only by disabled deploy plugins
         "plugins/c9.fs/net",
         {
             packagePath: "plugins/c9.fs/fs",
@@ -705,33 +705,29 @@ module.exports = function(options) {
             staticPrefix: staticPrefix + "/plugins/c9.ide.collab/notifications"
         },
         
+        // Test
+        "plugins/c9.ide.test/test",
+        "plugins/c9.ide.test/testpanel",
+        "plugins/c9.ide.test/testrunner",
+        {
+            packagePath: "plugins/c9.ide.test/all",
+            staticPrefix: staticPrefix + "/plugins/c9.ide.test"
+        },
+        "plugins/c9.ide.test/results",
+        "plugins/c9.ide.test/coverage",
+        "plugins/c9.ide.test/coverageview",
+        
+        "plugins/c9.ide.test.mocha/mocha",
+        
         // git integration
         "plugins/c9.ide.scm/scm",
         "plugins/c9.ide.scm/scmpanel",
         "plugins/c9.ide.scm/detail",
         "plugins/c9.ide.scm/log",
         "plugins/c9.ide.scm/git",
-        "plugins/c9.ide.scm/editor",
+        "plugins/c9.ide.scm/editor"
     ];
     
-    if (!options.sdk) {
-        plugins.push(
-            // Test
-            "plugins/c9.ide.test/test",
-            "plugins/c9.ide.test/testpanel",
-            "plugins/c9.ide.test/testrunner",
-            {
-                packagePath: "plugins/c9.ide.test/all",
-                staticPrefix: staticPrefix + "/plugins/c9.ide.test"
-            },
-            "plugins/c9.ide.test/results",
-            "plugins/c9.ide.test/coverage",
-            "plugins/c9.ide.test/coverageview",
-            
-            "plugins/c9.ide.test.mocha/mocha"
-        );
-    }
-
     
     if (packaging || !devel) {
         plugins.push({
