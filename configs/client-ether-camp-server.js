@@ -741,6 +741,7 @@ module.exports = function(options) {
             packagePath: "plugins/ethergit.ethereum.sandbox/login_dialog/dialog",
             apiUrl: options.apiUrl
         },
+        "plugins/ethergit.ethereum.sandbox/activity",
         "plugins/ethergit.guests.count/guests_count"
     ];
      
