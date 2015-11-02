@@ -178,7 +178,7 @@ define(function(require, module, exports) {
                 if (!editors.findEditor(e.value).fileExtensions.length)
                     openEditor(e.value, true, function(){});
                 else if (focussedTab)
-                    focussedTab.switchEditor(e.value, function(){});
+                    switchEditor(focussedTab, e.value, function(){});
             });
             editors.on("menuShow", function(e) {
                 var group, editor = focussedTab && focussedTab.editor;
@@ -186,13 +186,8 @@ define(function(require, module, exports) {
                     group = node.group;
                     
                     var path = focussedTab && focussedTab.path || "";
-                    var ext = path.substr(path.lastIndexOf(".") + 1);
-                    
                     var type = node.value;
-                    var extensions = editors.findEditor(type).fileExtensions;
-                    var isAvailable = editors.defaultEditor == type 
-                        || extensions.indexOf(ext.toLowerCase()) > -1
-                        || !extensions.length;
+                    var isAvailable = editors.editorSupportsFile(type, path);
         
                     node.setAttribute("disabled", !isAvailable);
                 });
@@ -1410,6 +1405,13 @@ define(function(require, module, exports) {
             return true;
         }
         
+        function switchEditor(tab, type, callback) {
+            tab.switchEditor(type, function(){
+                emit("switchEditor", { tab: tab });
+                callback.apply(this, arguments);
+            });
+        }
+        
         /**** Support for state preservation ****/
     
         function pauseTabResize(){
@@ -1960,6 +1962,11 @@ define(function(require, module, exports) {
              * 
              */
             clone: clone,
+            
+            /**
+             * 
+             */
+            switchEditor: switchEditor,
             
             /**
              * @ignore

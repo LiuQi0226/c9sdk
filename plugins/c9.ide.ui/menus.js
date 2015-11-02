@@ -942,6 +942,10 @@ define(function(require, exports, module) {
                 return item;
             }
             
+            function remove(item){
+                aml.removeChild(item.aml);
+            }
+            
             function show(x, y) {
                 lastCoords = { x : x, y : y };
                 aml.display(x, y);
@@ -954,6 +958,8 @@ define(function(require, exports, module) {
                     visible: options.visible,
                     width: options.width,
                     height: options.height,
+                    minWidth: options.minWidth,
+                    minHeight: options.minHeight,
                     "onprop.visible" : function(e) {
                         emit(e.value ? "show" : "hide", lastCoords);
                         checkItems.call(this, e);
@@ -1073,6 +1079,18 @@ define(function(require, exports, module) {
                 get height(){ return aml && aml.getHeight(); },
                 set height(value) { aml && aml.setAttribute("height", value); },
                 /**
+                 * Specifies the minimal width of the menu
+                 * @property {Number} width
+                 */
+                get minWidth(){ return aml && aml.getAttribute("minwidth"); },
+                set minWidth(value) { aml && aml.setAttribute("minwidth", value); },
+                /**
+                 * Specifies the minimal height of the menu
+                 * @property {Number} height
+                 */
+                get minHeight(){ return aml && aml.getAttribute("minheight"); },
+                set minHeight(value) { aml && aml.setAttribute("minheight", value); },
+                /**
                  * The menu items appended to this menu
                  * @property {MenuItem[]} items
                  * @readonly
@@ -1103,6 +1121,12 @@ define(function(require, exports, module) {
                  * @param {MenuItem} item  The item to add to this menu.
                  */
                 append: append,
+                
+                /**
+                 * Remove a menu item from this menu
+                 * @param {MenuItem} item  The item to remove from this menu.
+                 */
+                remove: remove,
                 
                 /**
                  * Show the menu at the specified position

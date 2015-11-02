@@ -382,7 +382,7 @@ module.exports = function(options) {
         "plugins/c9.ide.immediate/evaluator",
         "plugins/c9.ide.immediate/evaluators/browserjs",
         "plugins/c9.ide.immediate/evaluators/debugnode",
-        // "plugins/c9.ide.immediate/evaluators/bash",
+        "plugins/c9.ide.immediate/evaluators/bash",
         "plugins/c9.ide.run.debug/variables",
         "plugins/c9.ide.run.debug/watches",
         "plugins/c9.ide.run.debug/liveinspect",
@@ -706,7 +706,9 @@ module.exports = function(options) {
         },
         
         // Test
-        "plugins/c9.ide.test/test",
+        {
+            packagePath: "plugins/c9.ide.test/test"
+        },
         "plugins/c9.ide.test/testpanel",
         "plugins/c9.ide.test/testrunner",
         {
@@ -725,7 +727,8 @@ module.exports = function(options) {
         "plugins/c9.ide.scm/detail",
         "plugins/c9.ide.scm/log",
         "plugins/c9.ide.scm/git",
-        "plugins/c9.ide.scm/editor"
+        "plugins/c9.ide.scm/editor",
+        "plugins/c9.ide.scm/mergetool"
     ];
     
     
