@@ -122,7 +122,8 @@ module.exports = function(options) {
             servers: options.vfsServers,
             updateServers: hosted,
             strictRegion: options.strictRegion
-                || options.mode === "beta" && "beta"
+                || options.mode === "beta" && "beta",
+            ignoreProtocolVersion: options.ignoreProtocolVersion
         },
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/auth/auth",
@@ -217,8 +218,7 @@ module.exports = function(options) {
             installPath: options.installPath,
             nak: options.nakBin || "~/.c9/node_modules/nak/bin/nak",
             node: options.nodeBin,
-            local: options.local,
-            installPath: options.installPath
+            local: options.local
         },
         {
             packagePath: "plugins/c9.ide.find.infiles/findinfiles",
@@ -386,7 +386,7 @@ module.exports = function(options) {
         "plugins/c9.ide.run.debug/variables",
         "plugins/c9.ide.run.debug/watches",
         "plugins/c9.ide.run.debug/liveinspect",
-        // "plugins/c9.ide.immediate/evaluators/bash",
+        "plugins/c9.ide.immediate/evaluators/bash",
         "plugins/c9.ide.run.debug.xdebug/xdebug",
         "plugins/c9.ide.run.debug/debuggers/gdb/gdbdebugger",
         
@@ -748,7 +748,9 @@ module.exports = function(options) {
     if (!options.sdk) {
         plugins.push(
             // Test
-            "plugins/c9.ide.test/test",
+            {
+                packagePath: "plugins/c9.ide.test/test"
+            },
             "plugins/c9.ide.test/testpanel",
             "plugins/c9.ide.test/testrunner",
             {

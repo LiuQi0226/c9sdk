@@ -93,7 +93,10 @@ module.exports = function(options) {
             region: options.region,
             pid: options.project.id,
             servers: options.vfsServers,
-            updateServers: hosted
+            updateServers: hosted,
+            strictRegion: options.strictRegion
+                || options.mode === "beta" && "beta",
+            ignoreProtocolVersion: options.ignoreProtocolVersion
         },
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/auth/auth",
