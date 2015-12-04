@@ -195,7 +195,7 @@ module.exports = function(config, optimist) {
         "./c9.metrics/mock_metrics",
         "./c9.ide.experiment/mock_experiment",
         {
-            packagePath: "./c9.vfs.server/vfs.connect.standalone",
+            packagePath: "./ether.camp.server/vfs.connect",
             workspaceDir: baseProc,
             readonly: readonly,
             extendDirectory: config.extendDirectory,
