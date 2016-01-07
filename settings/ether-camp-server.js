@@ -61,7 +61,7 @@ module.exports = function(manifest, installPath) {
         projectUrl: "/workspace",
         ideBaseUrl: "http://c9.io",
         previewUrl: "/preview",
-        dashboardUrl: "http://hack.ether.camp",
+        dashboardUrl: process.env.DASHBOARD_URL || "/",
         apiUrl: process.env.AUTH_URL || "http://dev.auth.ether.camp/ide",
         homeUrl: "/home",
         collab: true,
