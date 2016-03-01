@@ -14,9 +14,10 @@ module.exports = function(manifest, installPath) {
     var workspaceDir = path.resolve(__dirname + "/../");
     var sdk = !manifest.sdk;
     var win32 = process.platform == "win32";
-    
-    if (win32 && process.env.HOME === undefined) {
-        process.env.HOME = process.env.HOMEDRIVE + process.env.HOMEPATH;
+ 
+     if (win32) {
+         if (process.env.HOME === undefined)
+             process.env.HOME = process.env.HOMEDRIVE + process.env.HOMEPATH;
         if (!/msys\/bin|Git\/bin/.test(process.env.PATH))
             process.env.PATH = path.join(process.env.HOME, ".c9", "msys/bin") + ";" + process.env.PATH;
     }
@@ -93,9 +94,6 @@ module.exports = function(manifest, installPath) {
             },
             assumeConnected: true
         },
-        feedback: {
-            userSnapApiKey: "a83fc136-1bc4-4ab8-8158-e750c30873b5"
-        },
         support: {
             userSnapApiKey: "e3d3b232-1c21-4961-b73d-fbc8dc7be1c3"
         },
@@ -119,12 +117,6 @@ module.exports = function(manifest, installPath) {
                 integrations: {
                     "All": true
                 }
-            },
-            treasureData: {
-                tdWriteKey: "12346",
-                tdDb: "test_db",
-                tdAgentHost: "localhost",
-                tdAgentPort: 24224
             }
         },
         raygun: {

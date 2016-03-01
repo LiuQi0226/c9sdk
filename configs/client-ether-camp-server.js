@@ -32,7 +32,7 @@ module.exports = function(options) {
     var runners = options.runners || {};
     var builders = options.builders || {};
     var hosted = !options.local && !options.dev;
-    var devel = options.standalone && !options.local || options.mode === "devel" || options.dev;
+    var devel = options.standalone && !options.local || options.mode === "devel" || options.mode == "onlinedev" || options.dev;
     
     var localExtendFiles = options.localExtend || options.standalone;
     // allow extend code access only to C9-deveoped plugins
@@ -63,7 +63,8 @@ module.exports = function(options) {
             projectId: options.project.id,
             projectName: options.projectName || "Project",
             configName: options.configName,
-            standalone: options.standalone
+            standalone: options.standalone,
+            dashboardUrl: options.dashboardUrl
         },
         {
             packagePath: "plugins/c9.core/settings",
@@ -92,7 +93,8 @@ module.exports = function(options) {
         },
         {
             packagePath: "plugins/c9.ide.plugins/manager",
-            staticPrefix: staticPrefix + "/plugins/c9.ide.plugins"
+            staticPrefix: staticPrefix + "/plugins/c9.ide.plugins",
+            devel: devel
         },
         {
             packagePath: "plugins/c9.ide.plugins/debug"
@@ -260,6 +262,7 @@ module.exports = function(options) {
         "plugins/c9.ide.dialog.common/fileremove",
         "plugins/c9.ide.dialog.common/info",
         "plugins/c9.ide.dialog.common/question",
+        "plugins/c9.ide.dialog.common/upsell",
         {
             packagePath: "plugins/c9.ide.dialog.common/error",
             staticPrefix: staticPrefix + "/plugins/c9.ide.layout.classic"
@@ -303,9 +306,7 @@ module.exports = function(options) {
         {
             packagePath: "plugins/c9.ide.language/language",
             workspaceDir: workspaceDir,
-            staticPrefix: hosted && !options.packed
-                ? options.ideBaseUrl + "/uph" + staticPrefix
-                : staticPrefix,
+            staticPrefix: staticPrefix,
             workerPrefix: options.CORSWorkerPrefix // "/static/standalone/worker"
         },
         "plugins/c9.ide.language/keyhandler",
@@ -319,12 +320,94 @@ module.exports = function(options) {
         "plugins/c9.ide.language.generic/generic",
         "plugins/c9.ide.language.css/css",
         "plugins/c9.ide.language.html/html",
+        // "plugins/c9.ide.language.codeintel/codeintel",
         "plugins/c9.ide.language.javascript/javascript",
         "plugins/c9.ide.language.javascript.immediate/immediate",
         "plugins/c9.ide.language.javascript.infer/jsinfer",
-        "plugins/c9.ide.language.javascript.tern/tern",
+        {
+            packagePath: "plugins/c9.ide.language.javascript.tern/tern",
+            plugins: [
+                {
+                    name: "angular",
+                    path: "tern/plugin/angular",
+                    enabled: true,
+                    hidden: false,
+                },
+                {
+                    name: "doc_comment",
+                    path: "tern/plugin/doc_comment",
+                    enabled: true,
+                    hidden: true,
+                },
+                {
+                    name: "es_modules",
+                    path: "tern/plugin/es_modules",
+                    enabled: true,
+                    hidden: true,
+                },
+                {
+                    name: "modules",
+                    path: "tern/plugin/modules",
+                    enabled: true,
+                    hidden: true,
+                },
+                {
+                    name: "node",
+                    path: "tern/plugin/node",
+                    enabled: true,
+                    hidden: false,
+                },
+                {
+                    name: "requirejs",
+                    path: "tern/plugin/requirejs",
+                    enabled: true,
+                    hidden: false,
+                },
+                {
+                    name: "architect_resolver",
+                    path: "./architect_resolver_worker",
+                    enabled: true,
+                    hidden: true,
+                },
+            ],
+            defs: [{
+                name: "ecma5",
+                enabled: true,
+                experimental: false,
+                firstClass: true,
+                path: "lib/tern/defs/ecma5.json"
+            }, {
+                name: "jQuery",
+                enabled: true,
+                experimental: false,
+                path: "lib/tern/defs/jquery.json"
+            }, {
+                name: "browser",
+                enabled: true,
+                experimental: false,
+                firstClass: true,
+                path: "lib/tern/defs/browser.json"
+            }, {
+                name: "underscore",
+                enabled: false,
+                experimental: false,
+                path: "lib/tern/defs/underscore.json"
+            }, {
+                name: "chai",
+                enabled: false,
+                experimental: false,
+                path: "lib/tern/defs/chai.json"
+            }]
+        },
+        "plugins/c9.ide.language.javascript.tern/ui",
+
         "plugins/c9.ide.language.javascript.tern/architect_resolver",
         "plugins/c9.ide.language.javascript.eslint/eslint",
+        {
+            packagePath: "plugins/c9.ide.language.python/python",
+            pythonPath:  "/usr/local/lib/python2.7/dist-packages:/usr/local/lib/python3.4/dist-packages:/usr/local/lib/python3.5/dist-packages",
+        },
+        "plugins/c9.ide.language.go/go",
         {
             packagePath: "plugins/c9.ide.language.jsonalyzer/jsonalyzer",
             extendToken: extendToken,
@@ -382,11 +465,11 @@ module.exports = function(options) {
         "plugins/c9.ide.immediate/evaluator",
         "plugins/c9.ide.immediate/evaluators/browserjs",
         "plugins/c9.ide.immediate/evaluators/debugnode",
-        
+        "plugins/c9.ide.immediate/evaluators/bash",        
         "plugins/c9.ide.run.debug/variables",
         "plugins/c9.ide.run.debug/watches",
         "plugins/c9.ide.run.debug/liveinspect",
-        "plugins/c9.ide.immediate/evaluators/bash",
+        
         "plugins/c9.ide.run.debug.xdebug/xdebug",
         "plugins/c9.ide.run.debug/debuggers/gdb/gdbdebugger",
         
@@ -462,6 +545,7 @@ module.exports = function(options) {
             cdn: options.useCdn
         },
         "plugins/c9.ide.theme.flat/flat-light",
+        "plugins/c9.ide.theme.flat/flat-dark",
         {
             packagePath: "plugins/c9.ide.layout.classic/preload",
             themePrefix: options.themePrefix,
@@ -568,7 +652,8 @@ module.exports = function(options) {
         "plugins/c9.ide.preview/previewers/raw",
         {
             packagePath: "plugins/c9.ide.preview.browser/browser",
-            local: options.local
+            local: options.local,
+            staticPrefix: staticPrefix + "/plugins/c9.ide.preview.browser"
         },
         {
             packagePath: "plugins/c9.ide.preview.markdown/markdown",
@@ -704,6 +789,22 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.collab/notifications/bubble",
             staticPrefix: staticPrefix + "/plugins/c9.ide.collab/notifications"
         },
+        
+        // Test
+        {
+            packagePath: "plugins/c9.ide.test/test"
+        },
+        "plugins/c9.ide.test/testpanel",
+        "plugins/c9.ide.test/testrunner",
+        {
+            packagePath: "plugins/c9.ide.test/all",
+            staticPrefix: staticPrefix + "/plugins/c9.ide.test"
+        },
+        "plugins/c9.ide.test/results",
+        "plugins/c9.ide.test/coverage",
+        "plugins/c9.ide.test/coverageview",
+        
+        "plugins/c9.ide.test.mocha/mocha",
 
         // git integration
         "plugins/c9.ide.scm/scm",
@@ -712,6 +813,7 @@ module.exports = function(options) {
         "plugins/c9.ide.scm/log",
         "plugins/c9.ide.scm/git",
         "plugins/c9.ide.scm/editor",
+        "plugins/c9.ide.scm/mergetool",
       
         // Ethergit plugins
         {
@@ -728,7 +830,6 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/new_tx_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/pkey_dialog",
         "plugins/ethergit.ethereum.sandbox/idle_detector",
-        "plugins/ethergit.ethereum.sandbox/stablenet_log",
         "plugins/ethergit.ethereum.sandbox/console",
         "plugins/ethergit.ethereum.sandbox/sandbox_control",
         "plugins/ethergit.ethereum.sandbox/config",
@@ -782,7 +883,10 @@ module.exports = function(options) {
         });
     }
     if (!hosted) {
-        plugins.push("plugins/c9.ide.analytics/mock_analytics");
+        plugins.push(
+            "plugins/c9.ide.analytics/mock_analytics",
+            "plugins/c9.ide.services/linked-services-mock"
+        );
     }
     
     // Collab
