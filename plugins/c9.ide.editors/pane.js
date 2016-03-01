@@ -103,16 +103,29 @@ define(function(require, module, exports) {
                         emit("afterClose", event);
                         
                         if (tab.aml.$amlDestroyed) {
-                            tab.unload(e);
+                            tab.unload(event);
                             closing--;
+                        }
+                        else if (tab.meta.$skipAnimation) {
+                            closeNow();
                         }
                         else {
                             tab.aml.on("afterclose", function(){
+                                closeNow();
+                            });
+                        }
+                        
+                        function closeNow(){
+                            if (tab.meta.$closeSync) {
+                                tab.unload(event);
+                                closing--;
+                            }
+                            else {
                                 setTimeout(function(){
-                                    tab.unload(e);
+                                    tab.unload(event);
                                     closing--;
                                 });
-                            });
+                            }
                         }
                     },
                     overactivetab: true,
@@ -572,11 +585,12 @@ define(function(require, module, exports) {
                     next = next.selectNodes("tab|hsplitbox|vsplitbox")[op]();
                 }
                 
-                // move all pages to another pane
-                getTabs().forEach(function(tab) {
-                    tab.attachTo(next.cloud9pane, null, true);
-                });
-    
+                if (next) {
+                    // move all pages to another pane if there is one
+                    getTabs().forEach(function(tab) {
+                        tab.attachTo(next.cloud9pane, null, true);
+                    });
+                }
                 // destroy aml element
                 amlPane.destroy(true, true);
                 

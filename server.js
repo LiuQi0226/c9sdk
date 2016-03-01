@@ -12,6 +12,8 @@ var optimist = require("optimist");
 var async = require("async");
 var os = require("os");
 var urls = require("c9/urls");
+var hostname = require("c9/hostname");
+var child_process = require("child_process");
 require("c9/setup_paths.js");
 
 if (process.version.match(/^v0/) && parseFloat(process.version.substr(3)) < 10) {
@@ -24,12 +26,30 @@ var DEFAULT_SETTINGS = getDefaultSettings();
 
 var shortcuts = {
     "dev":       ["ide", "preview", "user-content", "vfs", "api", "sapi", "proxy", "redis", "profile", "oldclient", "homepage", "apps-proxy", "-s", "devel"],
-    "onlinedev": ["ide", "preview", "user-content", "vfs", "api", "proxy", "oldclient", "homepage", "apps-proxy", "profile", "worker", "-s", "onlinedev"],
+    "onlinedev": ["ide", "preview", "user-content", "vfs", "api", "proxy", "oldclient", "homepage", "apps-proxy", "profile", "-s", "onlinedev"],
     "beta":      ["ide", "preview", "user-content", "vfs", "proxy", "-s", "beta"],
-    "s":         ["standalone", "-s", "standalone"]
+    "s":         ["standalone", "-s", "standalone"],
 };
+shortcuts.localdev = shortcuts.onlinedev.concat([
+    "-s", "beta",
+    "--ide.packed", "false",
+    "--ide.cdn", "false",
+    "--ide.forceDev", "true",
+    "--homepage.cdn", "false",
+    "--helpWithSudo",
+    "--api.port", "8281",
+    "--infra_port", "8282",
+    "--api_url", "http://api.c9.local:8281",
+    "--domains", "c9.local",
+    "--cdn.abbreviateVersion", "true",
+]);
 shortcuts.odev = shortcuts.onlinedev; // For backwards compatibility, if you see this in 2016 remove this line
-var delayLoadConfigs = ["preview", "user-content", "api", "oldclient", "apps-proxy", "worker"];
+var delayLoadConfigs = [
+    // Services that are usually not immediately needed
+    "preview", "user-content", "apps-proxy", "worker", "homepage",
+    // Services that are very slow to load, blocking others
+    "profile",
+];
 
 module.exports = main;
 
@@ -37,14 +57,14 @@ if (!module.parent)
     main(process.argv.slice(2));
 
 function getDefaultSettings() {
-    var hostname = os.hostname();
-    
-    var suffix = hostname.trim().split("-").pop() || "";
+    var suffix = hostname.parse(os.hostname()).env;
     var modes = {
+        "workflowstaging": "workflow-staging",
         "prod": "deploy",
         "beta": "beta",
         "dev": "devel",
-        "onlinedev": "onlinedev"
+        "onlinedev": "onlinedev",
+        "test": "test"
     };
     return modes[suffix] || "devel";
 }
@@ -62,6 +82,8 @@ function main(argv, config, onLoaded) {
         .describe("dump", "dump config file as JSON")
         .describe("domains", "Primary and any secondary top-level domains to use (e.g, c9.io,c9.dev)")
         .describe("exclude", "Exclude specified service")
+        .describe("include", "Include only specified service")
+        .describe("helpWithSudo", "Ask for sudo password on startup")
         .default("domains", inContainer && process.env.C9_HOSTNAME || process.env.C9_DOMAINS)
         .boolean("help")
         .describe("help", "Show command line options.");
@@ -71,18 +93,29 @@ function main(argv, config, onLoaded) {
         configs = [config || DEFAULT_CONFIG];
     if (options.argv.exclude && !Array.isArray(options.argv.exclude.length))
         options.argv.exclude = [options.argv.exclude];
-    
+
     var expanded = expandShortCuts(configs);
+
     if (expanded.length > configs.length)
         return main(expanded.concat(argv.filter(function(arg) {
             return !shortcuts[arg];
         })), config, onLoaded);
 
+    if (options.argv.include)
+        expanded = [].concat(options.argv.include);
+    
     var delayed = expanded.filter(function(c) { return delayLoadConfigs.indexOf(c) !== -1 });
     var notDelayed = expanded.filter(function(c) { return delayLoadConfigs.indexOf(c) === -1 });
     
+    if (options.argv.helpWithSudo)
+        return child_process.execFile("sudo", ["echo -n"], main.bind(null, argv.filter(function(a) {
+            return a !== "--helpWithSudo";
+        }), config, onLoaded));
+    
     startConfigs(notDelayed, function() {
-        startConfigs(delayed, function() {});
+        startConfigs(delayed, function() {
+            console.log("Cloud9 is up and running");
+        });
     });
     
     function startConfigs(configs, done) {

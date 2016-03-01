@@ -56,20 +56,20 @@ define(function(require, exports, module) {
                 removeSingleNode(e);
             });
             
-            watcher.on("change", function(e) {
-                onstat({path: e.path, result: [null, e.stat]});
+            watcher.on("change.all", function(e) {
+                onstat({ path: e.path, result: [null, e.stat] });
             });
             
-            watcher.on("directory", function(e) {
+            watcher.on("directory.all", function(e) {
                 // @todo make onreaddir incremental
-                onreaddir({path: e.path, result: [null, e.files]});
+                onreaddir({ path: e.path, result: [null, e.files] });
             });
             
             // Read
             fs.on("beforeReaddir", function (e) {
                 var node = findNode(e.path);
                 if (!node) 
-                    return; //Parent is not visible
+                    return; // Parent is not visible
                 
                 // Indicate this directory is being read
                 model.setAttribute(node, "status", "loading");
@@ -147,6 +147,8 @@ define(function(require, exports, module) {
             fs.on("afterReaddir", onreaddir, plugin);
             
             function onstat(e) {
+                var stat;
+                
                 if (!e.error) {
                     // update cache
                     var there = true;
@@ -168,14 +170,14 @@ define(function(require, exports, module) {
                                 deleteNode(node);
                         }
                         else {
-                            var stat = e.result[1];
+                            stat = e.result[1];
                             if (typeof stat != "object")
                                 stat = null;
                             createNode(e.path, stat);
                         }
                     }
                     else if (there) {
-                        var stat = e.result[1];
+                        stat = e.result[1];
                         if (typeof stat != "object")
                             stat = null;
                         createNode(e.path, stat, node);
@@ -202,18 +204,19 @@ define(function(require, exports, module) {
             
             function addSingleNode(e, isFolder, linkInfo) {
                 var node = findNode(e.path);
-                if (node) return; //Node already exists
+                if (node) return; // Node already exists
                 
                 if (!showHidden && isFileHidden(e.path))
                     return;
                 
                 var parent = findNode(dirname(e.path));
-                if (parent) { //Dir is in cache
+                if (parent) { // Dir is in cache
                     var stat = isFolder 
-                        ? {mime : "folder"} 
+                        ? { mime : "folder" } 
                         : (linkInfo
-                            ? {link: true, linkStat: {fullPath: linkInfo}}
-                            : null);
+                            ? { link: true, linkStat: { fullPath: linkInfo } }
+                            : {});
+                    stat.mtime = Date.now();
                     node = createNode(e.path, stat);
 
                     emit("add", {path : e.path, node : node});
@@ -461,15 +464,30 @@ define(function(require, exports, module) {
             var parts = path.split("/");
             var node = context || model.root;
             if (!node) {
-                node = orphans[parts[0]]; //model.realRoot || 
+                node = orphans[parts[0]]; // model.realRoot || 
                 if (node) parts.shift();
             }
             
             if (path == "/") parts.shift();
             
+            var up = 0;
+            for (var i = parts.length; i--;) {
+                var p = parts[i];
+                if (!p && i || p === ".") {
+                    parts.splice(i, 1);
+                }
+                else if (p === "..") {
+                    parts.splice(i, 1);
+                    up++;
+                }
+                else if (up) {
+                    parts.splice(i, 1);
+                    up--;
+                }
+            }
+            
             for (var i = 0; i < parts.length; i++) { 
                 var p = parts[i];
-                if (!p && i) continue; // allow paths with trailing /
                 if (node)
                     node = node.map && node.map[p];
                 if (!node)
@@ -553,17 +571,22 @@ define(function(require, exports, module) {
                 if (isFolder) {
                     node.status = node.status || "pending";
                 } else {
-                    node.contenttype = stat.mime || util.getContentType(name);
                     node.status = "loaded";
                 }
-
+                if (typeof stat.mtime !== "number" && stat.mtime) {
+                    // TODO fix localfs to not send date objects here
+                    stat.mtime = +stat.mtime;
+                }
                 if (stat.size != undefined)
                     node.size = stat.size;
                 if (stat.mtime != undefined)
                     node.mtime = stat.mtime;
-                if (original_stat)
-                    node.link = stat.fullPath;
-                node.isFolder = isFolder;
+                if (original_stat || stat.linkErr)
+                    node.link = stat.fullPath || stat.linkErr;
+                if (isFolder)
+                    node.isFolder = isFolder;
+                else
+                    delete node.isFolder;
             }
             
             if (node.isFolder && !node.map)
@@ -631,9 +654,9 @@ define(function(require, exports, module) {
             return copy;
         }
         
-        function clear(){
+        function clear() {
             var all = model.visibleItems;
-            for (var i = all.length; i--; ) {
+            for (var i = all.length; i--;) {
                 if (model.isOpen(all[i]))
                     model.collapse(all[i]);
             }
@@ -736,6 +759,10 @@ define(function(require, exports, module) {
         });
         plugin.on("unload", function(){
             loaded = false;
+            showHidden = false;
+            hiddenFilePattern = "";
+            hiddenFileRe = /^$/;
+            orphans = {};
         });
         
         /***** Register and define API *****/

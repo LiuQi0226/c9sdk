@@ -46,6 +46,7 @@ define(function(require, exports, module) {
             index: options.index || 100,
             caption: "Workspace",
             panelCSSClass: "workspace_files",
+            buttonCSSClass: "workspace",
             minWidth: 130,
             where: options.where || "left"
         });
@@ -277,6 +278,7 @@ define(function(require, exports, module) {
             btnTreeSettings.setAttribute("submenu", mnuFilesSettings);
             tree.renderer.on("scrollbarVisibilityChanged", updateScrollBarSize);
             tree.renderer.on("resize", updateScrollBarSize);
+            tree.renderer.scrollBarV.$minWidth = 10;
             function updateScrollBarSize() {
                 var scrollBarV = tree.renderer.scrollBarV;
                 var w = scrollBarV.isVisible ? scrollBarV.getWidth() : 0;
@@ -340,15 +342,6 @@ define(function(require, exports, module) {
                 }
             }), 300, plugin);
             
-            mnuFilesSettings.on("prop.visible", function(e) {
-                
-            }, plugin);
-            
-            // todo
-            winFilesViewer.on("prop.visible", function(e) {
-                
-            }, plugin);
-    
             // After an item in the tree has been clicked on, this saves that
             // selection in the settings model
             // @todo optimize this with a timeout if needed
@@ -611,7 +604,7 @@ define(function(require, exports, module) {
                     if (!hasNetwork && !item.enableOffline) {
                         disabled = true;
                     }
-                    else if (item.write == c9.readonly) {
+                    else if (item.write && c9.readonly) {
                         disabled = true;
                     }
                     else if (match == "clipboard") {

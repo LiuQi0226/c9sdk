@@ -167,7 +167,6 @@ define(function(require, exports, module) {
                     title: "Introduction",
                     position: 1,
                     node: intro = new ui.bar({
-                        height: 149,
                         "class" : "intro",
                         style: "padding:12px;position:relative;"
                     })
@@ -187,7 +186,12 @@ define(function(require, exports, module) {
                                 settings.set("user/ace/@keyboardmode", "default");
                                 settings.set("user/key-bindings/@platform", "auto");
                                 commands.reset(false, true);
-                            }, function(){});
+                            },
+                            function(){},
+                            {
+                                yes: "Reset Settings",
+                                no: "Cancel"
+                            });
                     },
                     position: 90
                 },

@@ -2,6 +2,7 @@ build/*/
 build/*.zip
 build/*.exe
 build/*.tgz
+b9/lib/js/node_modules/
 docs/generate/lib/node_modules
 plugins/c9.ide.layout.classic/less/*.css
 plugins/c9.vfs.standalone/www/less.html
@@ -25,6 +26,7 @@ plugins/c9.fs/mock/
 
 # ignore node_modules
 node_modules/*
+plugins/c9.batch/analytics/node_modules/
 # except git subtrees 
 !node_modules/ace*
 !node_modules/architect*
@@ -67,6 +69,8 @@ plugins/c9.account.*/node_modules/
 
 test/selenium/notify/
 test/selenium/results/
+testresults
+*cfresult*
 
 .c9revisions
 .settings

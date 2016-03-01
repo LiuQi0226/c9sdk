@@ -239,21 +239,24 @@ function main(options, imports, register) {
             var jsonalyzer = require("../c9.ide.language.jsonalyzer/default_plugins");
             var extraPackages = [
                 "plugins/c9.ide.test.mocha/mocha_outline_worker",
-                "plugins/@smartface/smartface.language/loadInclude"
+                "plugins/@smartface/smartface.language/loadInclude",
+                "plugins/@smartface/smartface.language/warnings_worker.js",
+                "plugins/@smartface/smartface.language/plugincomplete_worker.js",
+                "plugins/@smartface/smartface.language/emptyTernPlugin"
             ];
             try {
-                extraPackages = extraPackages.concat(require("lib/salesforce.language/__worker__"));
+                extraPackages = extraPackages
+                    .concat(require("lib/salesforce.language/__worker__"))
+                    .concat(require("lib/salesforce.sync/__worker__"));
             } catch(e) {}
             // TODO find a saner method for managing files loaded in language worker
             modules = [
                 "plugins/c9.ide.language/worker",
                 "plugins/c9.ide.language.generic/local_completer",
                 "plugins/c9.ide.language.generic/snippet_completer",
-                "plugins/c9.ide.language.generic/mode_completer",
                 "plugins/c9.ide.language.generic/open_files_local_completer",
                 "plugins/c9.ide.language.generic/simple/make",
                 "plugins/c9.ide.language.generic/simple/shell",
-                "plugins/c9.ide.language.generic/simple/php",
                 "plugins/c9.ide.language.javascript/parse",
                 "plugins/c9.ide.language.javascript/scope_analyzer",
                 "plugins/c9.ide.language.javascript/debugger",
@@ -264,6 +267,14 @@ function main(options, imports, register) {
                 "plugins/c9.ide.language.javascript.infer/infer_jumptodef",
                 "plugins/c9.ide.language.javascript.infer/infer_tooltip",
                 "plugins/c9.ide.language.javascript.infer/infer_completer",
+                "plugins/c9.ide.language.python/worker/python_linter",
+                "plugins/c9.ide.language.python/worker/python_completer",
+                "plugins/c9.ide.language.python/worker/python_jsonalyzer",
+                "plugins/c9.ide.language.go/worker/go_completer",
+                "plugins/c9.ide.language.codeintel/worker/php_completer",
+                "plugins/c9.ide.language.codeintel/worker/css_less_completer",
+                "plugins/c9.ide.language.codeintel/worker/ruby_completer",
+                "plugins/c9.ide.language.codeintel/worker/codeintel_worker",
                 "plugins/c9.ide.language.html/html_completer",
                 "plugins/c9.ide.language.css/css_handler",
                 "plugins/c9.ide.language.javascript.tern/worker/tern_worker",

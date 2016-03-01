@@ -3,7 +3,7 @@ define(function(require, exports, module) {
     main.consumes = [
         "PreferencePanel", "settings", "ui", "util", "Form", "ext", "c9",
         "dialog.alert", "dialog.confirm", "layout", "proc", "menus", "commands",
-        "dialog.error", "tree.favorites", "fs", "tree", "plugin.debug",
+        "dialog.error", "dialog.info", "tree.favorites", "fs", "tree", "plugin.debug",
         "preferences.experimental"
     ];
     main.provides = ["plugin.manager"];
@@ -52,9 +52,11 @@ define(function(require, exports, module) {
         var tree = imports.tree;
         var proc = imports.proc;
         var util = imports.util;
+        var qs = require("querystring");
         var alert = imports["dialog.alert"].show;
         var confirm = imports["dialog.confirm"].show;
         var showError = imports["dialog.error"].show;
+        var showInfo = imports["dialog.info"].show;
         var favs = imports["tree.favorites"];
         var pluginDebug = imports["plugin.debug"];
         var experimental = imports["preferences.experimental"];
@@ -96,16 +98,22 @@ define(function(require, exports, module) {
 
         /***** Initialization *****/
 
+        var ENABLED = c9.location.indexOf("debug=2") > -1
+            || experimental.addExperiment(
+                  "plugin-manager",
+                  options.devel,
+                  "SDK/Plugin Manager"
+               );
+
         var plugin = new PreferencePanel("Ajax.org", main.consumes, {
             caption: "Plugin Manager",
             className: "plugins",
             form: false,
             noscroll: true,
-            index: 200
+            index: 200,
+            visible: ENABLED,
         });
         // var emit = plugin.getEmitter();
-
-        var HASSDK = experimental.addExperiment("sdk=1", "SDK/Load Custom Plugins");
 
         var model, datagrid, filterbox;
         var btnUninstall, btnReport, btnReadme, btnCloud9, btnReload;
@@ -115,7 +123,7 @@ define(function(require, exports, module) {
             if (loaded) return false;
             loaded = true;
 
-            if (!HASSDK) return;
+            if (!ENABLED) return;
 
             // @TODO enable/disable plugins -> move to ext
 
@@ -127,6 +135,40 @@ define(function(require, exports, module) {
             //     changed = true;
             //     updateCommandsFromSettings();
             // }, plugin);
+            
+            
+            if (options.devel) {
+                commands.addCommand({
+                    name: "reloadLastPlugin",
+                    bindKey: {mac: "F4", win: "F4"},
+                    hint: "reload plugin last reloaded in plugin manager",
+                    exec: function() {
+                        var name = getLastReloaded();
+                        if (!name)
+                            return commands.exec("reloadPlugin", null, { panel: plugin });
+                        reload(name);
+                    }
+                }, plugin);
+                commands.addCommand({
+                    name: "reloadPlugin",
+                    group: "Plugins",
+                    exec: function(){ 
+                        commands.exec("openpreferences", null, { panel: plugin });
+                    }
+                }, plugin);
+                
+                menus.addItemByPath("Tools/~", new ui.divider(), 100000, plugin);
+                menus.addItemByPath("Tools/Developer", null, 100100, plugin);
+    
+                menus.addItemByPath("Tools/Developer/Reload Built-in Plugin...", new ui.item({
+                    command: "reloadPlugin"
+                }), 1100, plugin);
+                
+                menus.addItemByPath("Tools/Developer/Reload Last Plugin", new ui.item({
+                    command: "reloadLastPlugin",
+                    isAvailable: getLastReloaded
+                }), 1200, plugin);
+            }
 
             menus.addItemByPath("File/New Plugin", null, 210, plugin);
             Object.keys(TEMPLATES).forEach(function(name){
@@ -623,6 +665,12 @@ define(function(require, exports, module) {
         }
 
         function reload(name) {
+            showReloadTip();
+            
+            var href = document.location.href.replace(/[?&]reload=[^&]+/, "");
+            href += (href.match(/\?/) ? "&" : "?") + "reload=" + name;
+            window.history.replaceState(window.history.state, null, href);
+            
             for (var plugin in architect.lut) {
                 if (architect.lut[plugin].provides.indexOf(name) < 0)
                     continue;
@@ -630,6 +678,23 @@ define(function(require, exports, module) {
                 pluginDebug.reloadPackage(plugin);
                 return;
             }
+        }
+        
+        function showReloadTip() {
+            if (options.devel) {
+                var key = commands.getHotkey("reloadLastPlugin");
+                if (commands.platform == "mac")
+                    key = apf.hotkeys.toMacNotation(key);
+                if (!getLastReloaded()) {
+                    showInfo("Reloaded " + name + ". Press " + key + " to reload again.", 3000);
+                    return;
+                }
+            }
+            showInfo("Reloaded " + name + ".", 1000);
+        }
+        
+        function getLastReloaded() {
+            return qs.parse(document.location.search.substr(1)).reload;
         }
 
         /***** Lifecycle *****/

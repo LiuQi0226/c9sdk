@@ -23,9 +23,15 @@ define(function(require, module, exports) {
         
         function show(title, header, msg, onconfirm, oncancel, options) {
             return plugin.queue(function(){
+                if (!options) 
+                    options = {};
+                
                 plugin.title = title;
-                plugin.heading = options && options.isHTML ? header : util.escapeXml(header);
-                plugin.body = options && options.isHTML ? msg : util.escapeXml(msg).replace(/\n/g, "<br>");
+                plugin.heading = options.isHTML ? header : util.escapeXml(header);
+                plugin.body = options.isHTML ? msg : util.escapeXml(msg).replace(/\n/g, "<br>");
+                
+                plugin.getElement("ok").setCaption(options.yes || "OK");
+                plugin.getElement("cancel").setCaption(options.no || "Cancel");
                 
                 plugin.update([
                     { id: "ok", onclick: function(){ plugin.hide(); onconfirm(); } },

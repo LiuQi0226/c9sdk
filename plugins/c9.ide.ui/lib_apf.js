@@ -2988,10 +2988,11 @@ String.prototype.trim = function(){
  * @param {Number} times Number of times to repeat the String concatenation
  * @type  {String}
  */
-String.prototype.repeat = function(times) {
-    return Array(times + 1).join(this);
-};
-
+if (!String.prototype.repeat) {
+    String.prototype.repeat = function(times) {
+        return Array(times + 1).join(this);
+    };
+}
 /*
  * Count the number of occurences of substring 'str' inside a string
  *
@@ -3742,7 +3743,7 @@ function findCssRule(name, stylesheet, win) {
         var sheets = (win || self).document.styleSheets;
         for (var j = sheets.length - 1; j >= 0; j--) {
             try {
-                var rules = sheets[j][apf.styleSheetRules];
+                var rules = sheets[j][apf.styleSheetRules] || [];
                 for (var i = 0; i < rules.length; i++) {
                     if (nameRe.test(rules.item(i).selectorText)) {
                         return rules.item(i);
@@ -21705,7 +21706,7 @@ apf.window = function(){
         var amlNode = apf.window.activeElement, //apf.findHost(e.srcElement || e.target),
             htmlNode = (e.explicitOriginalTarget || e.srcElement || e.target),
             isTextInput = (ta[htmlNode.tagName]
-              || htmlNode.contentEditable || htmlNode.contentEditable == "true")  //@todo apf3.0 need to loop here?
+              || htmlNode.contentEditable == "true" || htmlNode.contentEditable == "plaintext-only")
               && !htmlNode.disabled
               || amlNode && amlNode.$isTextInput
               && amlNode.$isTextInput(e) && amlNode.disabled < 1;
@@ -35299,8 +35300,8 @@ apf.textbox = function(struct, tagName) {
         var v;
         
         if (this.isHTMLBox) { 
-            if (this.$input.innerText)
-                v = this.$input.innerText;
+            if (this.$input.textContent)
+                v = this.$input.textContent;
             else {
                 //Chrome has a bug, innerText is cleared when display property is changed
                 v = apf.html_entity_decode(this.$input.innerHTML
