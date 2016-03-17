@@ -816,6 +816,7 @@ module.exports = function(options) {
         "plugins/c9.ide.scm/mergetool",
       
         // Ethergit plugins
+        "plugins/ethergit.ethereum.sandbox/fix/inject-bootstrap-css",
         {
             packagePath: "plugins/ethergit.solidity.language/solidity",
             readonly: false
