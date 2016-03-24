@@ -19,6 +19,8 @@ module.exports = function(options) {
     options.installPath = normalize(options.installPath);
     options.home = normalize(options.home);
 
+    options.defaultTheme = 'flat-light';
+
     var workspaceDir = options.workspaceDir;
     var debug = options.debug !== undefined ? options.debug : false;
     

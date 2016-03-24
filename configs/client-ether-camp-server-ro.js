@@ -19,9 +19,11 @@ module.exports = function(options) {
     options.installPath = normalize(options.installPath);
     options.home = normalize(options.home);
 
+    options.defaultTheme = 'flat-light';
+  
     var workspaceDir = options.workspaceDir;
     var debug = options.debug !== undefined ? options.debug : false;
-    
+
     var collab = options.collab;
     var packaging = options.packaging;
     var staticPrefix = options.staticPrefix;
@@ -625,6 +627,7 @@ module.exports = function(options) {
         "plugins/c9.ide.readonly/proc",
 
         // Ethergit plugins
+        "plugins/ethergit.ethereum.sandbox/fix/inject-bootstrap-css",
         {
             packagePath: "plugins/ethergit.solidity.language/solidity",
             readonly: true

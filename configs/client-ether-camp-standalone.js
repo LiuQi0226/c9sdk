@@ -19,6 +19,8 @@ module.exports = function(options) {
     options.installPath = normalize(options.installPath);
     options.home = normalize(options.home);
 
+    options.defaultTheme = 'flat-light';
+
     var workspaceDir = options.workspaceDir;
     var debug = options.debug !== undefined ? options.debug : false;
     
@@ -37,7 +39,7 @@ module.exports = function(options) {
     var localExtendFiles = options.localExtend || options.standalone;
     // allow extend code access only to C9-deveoped plugins
     var extendToken = options.extendToken || "token";
-    
+
     var plugins = [
         // C9
         {
