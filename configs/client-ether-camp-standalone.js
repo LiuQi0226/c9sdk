@@ -838,7 +838,8 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/account_dialog",
         "plugins/ethergit.ethereum.sandbox/abi_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/send_to_net_dialog/dialog",
-        "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor"
+        "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor",
+        "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
 
     if (!options.sdk) {
