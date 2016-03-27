@@ -77,7 +77,9 @@ module.exports = function(config, optimist) {
     
     if (argv.hosted)
         config.client_config = "default-hosted";
-    
+
+    config.client_config = "ether-camp-campus";
+  
     config.workspaceDir = baseProc;
     config.settingDir = argv["setting-path"];
     config.projectName = path.basename(baseProc);

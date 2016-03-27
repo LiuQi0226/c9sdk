@@ -14,10 +14,10 @@ module.exports = function(manifest, installPath) {
     var workspaceDir = path.resolve(__dirname + "/../");
     var sdk = !manifest.sdk;
     var win32 = process.platform == "win32";
- 
-     if (win32) {
-         if (process.env.HOME === undefined)
-             process.env.HOME = process.env.HOMEDRIVE + process.env.HOMEPATH;
+
+    if (win32) {
+        if (process.env.HOME === undefined)
+            process.env.HOME = process.env.HOMEDRIVE + process.env.HOMEPATH;
         if (!/msys\/bin|Git\/bin/.test(process.env.PATH))
             process.env.PATH = path.join(process.env.HOME, ".c9", "msys/bin") + ";" + process.env.PATH;
     }
@@ -65,7 +65,7 @@ module.exports = function(manifest, installPath) {
         dashboardUrl: process.env.DASHBOARD_URL || "/",
         apiUrl: process.env.AUTH_URL || "http://dev.auth.ether.camp/ide",
         homeUrl: "/home",
-        collab: false,
+        collab: true,
         installed: true,
         packed: true,
         packedThemes: true,

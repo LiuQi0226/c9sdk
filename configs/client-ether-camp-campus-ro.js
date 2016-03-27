@@ -637,7 +637,8 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/idle_detector",
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/login_dialog/dialog",
-            apiUrl: options.apiUrl
+            apiUrl: options.apiUrl,
+            bcrypt: true
         },
         "plugins/ethergit.ethereum.sandbox/guest_pane_resize_fix",
         "plugins/ethergit.guests.count/guests_count",
