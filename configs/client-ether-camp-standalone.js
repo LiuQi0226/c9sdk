@@ -290,11 +290,11 @@ module.exports = function(options) {
         },
         "plugins/c9.fs/fs.errors",
         "plugins/c9.fs/fs.cache.xml",
-        {
-            packagePath: "plugins/c9.ide.readonly/access_control",
-            dashboardUrl: options.dashboardUrl,
-            readonly: options.readonly
-        },
+//        {
+//            packagePath: "plugins/c9.ide.readonly/access_control",
+//            dashboardUrl: options.dashboardUrl,
+//            readonly: options.readonly
+//        },
         
         // Watcher
         "plugins/c9.ide.threewaymerge/threewaymerge",
@@ -931,21 +931,22 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.collab/notifications/notifications",
             hosted: hosted,
             isAdmin: options.isAdmin
-        },
-        "plugins/c9.ide.collab/members/members_panel",
-        {
-            packagePath: "plugins/c9.ide.collab/share/share",
-            previewUrl: options.previewUrl,
-            local: options.local
-        },
-        {
-            packagePath: "plugins/c9.ide.collab/members/members",
-            staticPrefix: staticPrefix + "/plugins/c9.ide.layout.classic"
-        },
-        {
-            packagePath: "plugins/c9.ide.collab/chat/chat",
-            staticPrefix: staticPrefix + "/plugins/c9.ide.collab/chat"
-        });
+        }
+//        "plugins/c9.ide.collab/members/members_panel",
+//        {
+//            packagePath: "plugins/c9.ide.collab/share/share",
+//            previewUrl: options.previewUrl,
+//            local: options.local
+//        },
+//        {
+//            packagePath: "plugins/c9.ide.collab/members/members",
+//            staticPrefix: staticPrefix + "/plugins/c9.ide.layout.classic"
+//        },
+//        {
+//            packagePath: "plugins/c9.ide.collab/chat/chat",
+//            staticPrefix: staticPrefix + "/plugins/c9.ide.collab/chat"
+//        }
+        );
     }
 
     return plugins;
