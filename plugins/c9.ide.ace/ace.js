@@ -100,7 +100,7 @@ define(function(require, exports, module) {
         var defaultThemes = {
             "light" : "ace/theme/cloud9_day",
             "light-gray" : "ace/theme/cloud9_day",
-            "flat-light" : "ace/theme/cloud9_day",
+            "flat-light" : "ace/theme/tomorrow",
             "flat-dark"  : "ace/theme/cloud9_night_low_color",
             "dark"  : "ace/theme/cloud9_night_low_color",
             "dark-gray"  : "ace/theme/cloud9_night_low_color"
