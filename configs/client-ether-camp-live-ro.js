@@ -130,7 +130,8 @@ module.exports = function(options) {
         "plugins/c9.ide.editors/tab",
         {
             packagePath: "plugins/c9.ide.editors/tabmanager",
-            loadFilesAtInit: false
+            loadFilesAtInit: false,
+            ideProviderName: "Ethereum Studio"
         },
         {
             packagePath: "plugins/c9.ide.editors/metadata"
