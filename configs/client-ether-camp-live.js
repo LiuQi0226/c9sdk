@@ -849,7 +849,8 @@ module.exports = function(options) {
             bcrypt: false
         },
         "plugins/ethergit.ethereum.sandbox/activity",
-        "plugins/ethergit.guests.count/guests_count"
+        "plugins/ethergit.guests.count/guests_count",
+        "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
      
     if (!options.sdk) {

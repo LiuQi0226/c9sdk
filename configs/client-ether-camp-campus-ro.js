@@ -643,6 +643,7 @@ module.exports = function(options) {
         },
         "plugins/ethergit.ethereum.sandbox/guest_pane_resize_fix",
         "plugins/ethergit.guests.count/guests_count",
+        "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
     
     if (packaging || !devel) {
