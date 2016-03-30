@@ -845,13 +845,9 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor",
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/login_dialog/dialog",
-            apiUrl: options.apiUrl,
-            bcrypt: true
+            apiUrl: options.apiUrl
         },
-        {
-            packagePath: "plugins/ethergit.ethereum.sandbox/change_password_dialog/dialog",
-            bcrypt: true
-        },
+        "plugins/ethergit.ethereum.sandbox/change_password_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/activity",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.ethereum.sandbox/feedback/feedback"
