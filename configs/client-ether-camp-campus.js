@@ -691,6 +691,7 @@ module.exports = function(options) {
                 fullname: options.user.fullname,
                 email: options.user.email,
                 pubkey: options.user.pubkey,
+                access: options.user.access,
                 date_add: options.user.date_add,
                 active: options.user.active,
                 alpha: options.user.alpha,
@@ -704,6 +705,7 @@ module.exports = function(options) {
             project: {
                 id: options.project.id,
                 name: options.project.name,
+                nonpublic: options.project.nonpublic,
                 contents: options.project.contents,
                 descr: options.project.descr,
                 remote: options.project.remote
@@ -850,7 +852,8 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/change_password_dialog/dialog",
         "plugins/ethergit.ethereum.sandbox/activity",
         "plugins/ethergit.guests.count/guests_count",
-        "plugins/ethergit.ethereum.sandbox/feedback/feedback"
+        "plugins/ethergit.ethereum.sandbox/feedback/feedback",
+        "plugins/ethergit.ethereum.sandbox/publish/publish"
     ];
      
     if (!options.sdk) {
