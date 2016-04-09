@@ -853,7 +853,8 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/activity",
         "plugins/ethergit.guests.count/guests_count",
         "plugins/ethergit.ethereum.sandbox/feedback/feedback",
-        "plugins/ethergit.ethereum.sandbox/publish/publish"
+        "plugins/ethergit.ethereum.sandbox/publish/publish",
+        "plugins/ethergit.ethereum.sandbox/notifications/notifications"
     ];
      
     if (!options.sdk) {
