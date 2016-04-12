@@ -548,6 +548,7 @@ module.exports = function(options) {
                 fullname: options.user.fullname,
                 email: options.user.email,
                 pubkey: options.user.pubkey,
+                access: options.user.access,
                 date_add: options.user.date_add,
                 active: options.user.active,
                 alpha: options.user.alpha,
@@ -561,6 +562,7 @@ module.exports = function(options) {
             project: {
                 id: options.project.id,
                 name: options.project.name,
+                nonpublic: options.project.nonpublic,
                 contents: options.project.contents,
                 descr: options.project.descr,
                 remote: options.project.remote
