@@ -5,4 +5,6 @@ git clone ssh://git@github.com/etherj/ethergit.ethereum.sandbox.git
 git clone ssh://git@github.com/etherj/ethergit.guests.count.git
 git clone ssh://git@github.com/etherj/ether.camp.server.git
 git clone ssh://git@github.com/etherj/ethergit.libs.git
+# plugins
+git clone ssh://git@github.com/oraclize/ethereum-studio-ide-plugin.git ethereum.studio.oraclize
 cd ../
