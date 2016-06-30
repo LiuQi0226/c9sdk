@@ -14,7 +14,8 @@ module.exports = function(manifest, installPath) {
     var workspaceDir = path.resolve(__dirname + "/../");
     var sdk = !manifest.sdk;
     var win32 = process.platform == "win32";
-
+    
+  
     if (win32) {
         if (process.env.HOME === undefined)
             process.env.HOME = process.env.HOMEDRIVE + process.env.HOMEPATH;

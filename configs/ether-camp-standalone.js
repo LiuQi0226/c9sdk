@@ -102,12 +102,12 @@ module.exports = function(config, optimist) {
         console.log("and suppress this message.\n");
         host = config.host = "127.0.0.1";
     }
-    if (/:/.test(argv.auth) && !isLocalhost && !process.env.C9_HOSTNAME) {
+    var auth = (argv.auth + "").split(":");
+    if (!auth[1] && !isLocalhost && !process.env.C9_HOSTNAME) {
         console.log("Warning: running Cloud9 without using HTTP authentication.");
         console.log("Run using --listen localhost instead to only expose Cloud9 to localhost,");
         console.log("or use -a username:password to setup HTTP authentication\n");
     }
-    var auth = (argv.auth || ":").split(":");
 
     var plugins = [
         {
@@ -138,7 +138,7 @@ module.exports = function(config, optimist) {
         {
             packagePath: "connect-architect/connect.redirect",
             trustedDomainsRe: /.*/,
-        },
+        }, 
         "connect-architect/connect.cors",
         "./c9.connect.favicon/favicon",
         // "./c9.logger/stdout-logger",
@@ -160,7 +160,6 @@ module.exports = function(config, optimist) {
                 "c9.vfs.client": true,
                 "c9.cli.bridge": true,
                 "c9.nodeapi": true,
-                "c9.ide.experiment": true,
                 "saucelabs.preview": true,
                 "ethergit.solidity.language": true,
                 "ethergit.solidity.compiler": true,
@@ -195,10 +194,10 @@ module.exports = function(config, optimist) {
         "./c9.vfs.server/cache",
         "./c9.vfs.server/download",
         "./c9.vfs.server/filelist",
+        "./c9.vfs.server/fetchcache",
         "./c9.vfs.server/statics",
         "./c9.analytics/mock_analytics",
         "./c9.metrics/mock_metrics",
-        "./c9.ide.experiment/mock_experiment",
         {
             packagePath: "./c9.vfs.server/vfs.connect.standalone",
             workspaceDir: baseProc,

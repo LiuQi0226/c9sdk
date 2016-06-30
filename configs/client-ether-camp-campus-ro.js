@@ -20,10 +20,10 @@ module.exports = function(options) {
     options.home = normalize(options.home);
 
     options.defaultTheme = 'flat-light';
-  
+
     var workspaceDir = options.workspaceDir;
     var debug = options.debug !== undefined ? options.debug : false;
-
+    
     var collab = options.collab;
     var packaging = options.packaging;
     var staticPrefix = options.staticPrefix;
@@ -79,16 +79,22 @@ module.exports = function(options) {
             packagePath: "plugins/c9.core/http-xhr",
             debug: !options.packed
         },
+        // {
+        //     packagePath: "plugins/c9.core/client",
+        //     baseUrl: options.apiUrl
+        // },
         "plugins/c9.core/util",
 
         // VFS
         "plugins/c9.vfs.client/vfs.ping",
+        "plugins/c9.vfs.client/vfs.log",
         {
             packagePath: "plugins/c9.vfs.client/vfs_client",
             debug: debug,
             installPath: options.installPath,
             dashboardUrl: options.dashboardUrl,
-            accountUrl: options.accountUrl
+            accountUrl: options.accountUrl,
+            rejectUnauthorized: options.rejectUnauthorized
         },
         {
             packagePath: "plugins/c9.vfs.client/endpoint",
@@ -99,7 +105,7 @@ module.exports = function(options) {
             updateServers: hosted,
             strictRegion: options.strictRegion
                 || options.mode === "beta" && "beta",
-            ignoreProtocolVersion: options.ignoreProtocolVersion
+            ignoreProtocolVersion: options.ignoreProtocolVersion,
         },
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/auth/auth",
@@ -127,6 +133,7 @@ module.exports = function(options) {
             staticPrefix: staticPrefix + "/plugins/c9.ide.imgeditor"
         },
         "plugins/c9.ide.editors/urlview",
+        // "plugins/c9.ide.editors/htmlview",
         "plugins/c9.ide.editors/tab",
         {
             packagePath: "plugins/c9.ide.editors/tabmanager",
@@ -253,16 +260,21 @@ module.exports = function(options) {
         {
             packagePath: "plugins/c9.ide.language/language",
             workspaceDir: workspaceDir,
+            staticPrefix: staticPrefix,
             workerPrefix: options.CORSWorkerPrefix // "/static/standalone/worker"
         },
-        "plugins/c9.ide.language/keyhandler",
-        "plugins/c9.ide.language/complete",
-        "plugins/c9.ide.language/marker",
-        "plugins/c9.ide.language/refactor",
-        "plugins/c9.ide.language/tooltip",
-        "plugins/c9.ide.language/jumptodef",
+        "plugins/c9.ide.language.core/keyhandler",
+        "plugins/c9.ide.language.core/complete",
+        "plugins/c9.ide.language.core/quickfix",
+        "plugins/c9.ide.language.core/marker",
+        "plugins/c9.ide.language.core/refactor",
+        "plugins/c9.ide.language.core/tooltip",
+        "plugins/c9.ide.language.core/jumptodef",
         "plugins/c9.ide.language/worker_util_helper",
-        "plugins/c9.ide.language.generic/generic",
+        {
+            packagePath: "plugins/c9.ide.language.generic/generic",
+            mode_completer: options.ssh,
+        },
         "plugins/c9.ide.language.css/css",
         "plugins/c9.ide.language.html/html",
         "plugins/c9.ide.language.javascript/javascript",
@@ -344,7 +356,6 @@ module.exports = function(options) {
             }]
         },
         "plugins/c9.ide.language.javascript.tern/ui",
-        
         "plugins/c9.ide.language.javascript.tern/architect_resolver",
         "plugins/c9.ide.language.javascript.eslint/eslint",
         {
@@ -463,7 +474,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.keys/panel"
         },
         {
-            packagePath: "plugins/c9.ide.language/outline",
+            packagePath: "plugins/c9.ide.language.core/outline",
             staticPrefix: staticPrefix + "/plugins/c9.ide.language"
         },
         {
@@ -551,13 +562,9 @@ module.exports = function(options) {
                 access: options.user.access,
                 date_add: options.user.date_add,
                 active: options.user.active,
-                alpha: options.user.alpha,
-                beta: options.user.beta,
                 c9version: options.user.c9version,
-                no_newsletter: options.user.no_newsletter,
-                subscription_on_signup: options.user.subscription_on_signup,
                 premium: options.user.premium,
-                region: options.user.region
+                region: options.user.region,
             },
             project: {
                 id: options.project.id,
@@ -565,7 +572,8 @@ module.exports = function(options) {
                 nonpublic: options.project.nonpublic,
                 contents: options.project.contents,
                 descr: options.project.descr,
-                remote: options.project.remote
+                remote: options.project.remote,
+                premium: options.project.premium,
             }
         },
         {
@@ -576,10 +584,12 @@ module.exports = function(options) {
             checkOS: true
         },
         {
-            packagePath: "plugins/c9.ide.help.support/support",
-            baseurl: options.ideBaseUrl, 
-            userSnapApiKey: options.support.userSnapApiKey,
-            screenshotSupport: true
+            packagePath: "plugins/c9.cli.bridge/bridge",
+            startBridge: options.startBridge
+        },
+        {
+            packagePath: "plugins/c9.cli.bridge/bridge_commands",
+            basePath: workspaceDir
         },
         {
             packagePath: "plugins/c9.ide.help/help",
@@ -597,11 +607,14 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.clipboard/html5"
         },
         "plugins/c9.ide.behaviors/tabs",
+        // {
+        //     packagePath: "plugins/c9.ide.behaviors/dashboard",
+        //     staticPrefix : staticPrefix + "/plugins/c9.ide.behaviors"
+        // },
         {
             packagePath: "plugins/c9.ide.behaviors/page",
             staticPrefix: staticPrefix + "/plugins/c9.ide.behaviors"
         },
-        "plugins/c9.ide.browsersupport/browsersupport",
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/login/login",
             staticPrefix: staticPrefix + "/plugins/ethergit.ethereum.sandbox",
@@ -647,6 +660,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
     
+    
     if (packaging || !devel) {
         plugins.push({
             packagePath: "plugins/c9.ide.errorhandler/raygun_error_handler",
@@ -665,7 +679,6 @@ module.exports = function(options) {
     if (!hosted) {
         plugins.push("plugins/c9.ide.analytics/mock_analytics");
     }
-
     
     // Collab
     if (packaging || !collab) {
@@ -722,8 +735,26 @@ module.exports = function(options) {
 //        {
 //            packagePath: "plugins/c9.ide.collab/members/members",
 //            staticPrefix: staticPrefix + "/plugins/c9.ide.layout.classic"
- //        }
+//        }
         );
     }
+
+    if (options.platform !== "win32") {
+        plugins.push({
+            packagePath: "plugins/c9.ide.language.codeintel/codeintel",
+            preinstalled: hosted && !options.ssh,
+            paths: {
+                php: ".:./vendor",
+            },
+        });
+    }
+
     return plugins;
 };
+
+
+
+
+
+
+

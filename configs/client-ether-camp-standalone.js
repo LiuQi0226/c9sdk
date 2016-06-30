@@ -111,12 +111,14 @@ module.exports = function(options) {
         
         // VFS
         "plugins/c9.vfs.client/vfs.ping",
+        "plugins/c9.vfs.client/vfs.log",
         {
             packagePath: "plugins/c9.vfs.client/vfs_client",
             debug: debug,
             installPath: options.installPath,
             dashboardUrl: options.dashboardUrl,
-            accountUrl: options.accountUrl
+            accountUrl: options.accountUrl,
+            rejectUnauthorized: options.rejectUnauthorized
         },
         {
             packagePath: "plugins/c9.vfs.client/endpoint",
@@ -312,18 +314,20 @@ module.exports = function(options) {
             staticPrefix: staticPrefix,
             workerPrefix: options.CORSWorkerPrefix // "/static/standalone/worker"
         },
-        "plugins/c9.ide.language/keyhandler",
-        "plugins/c9.ide.language/complete",
-        "plugins/c9.ide.language/quickfix",
-        "plugins/c9.ide.language/marker",
-        "plugins/c9.ide.language/refactor",
-        "plugins/c9.ide.language/tooltip",
-        "plugins/c9.ide.language/jumptodef",
+        "plugins/c9.ide.language.core/keyhandler",
+        "plugins/c9.ide.language.core/complete",
+        "plugins/c9.ide.language.core/quickfix",
+        "plugins/c9.ide.language.core/marker",
+        "plugins/c9.ide.language.core/refactor",
+        "plugins/c9.ide.language.core/tooltip",
+        "plugins/c9.ide.language.core/jumptodef",
         "plugins/c9.ide.language/worker_util_helper",
-        "plugins/c9.ide.language.generic/generic",
+        {
+            packagePath: "plugins/c9.ide.language.generic/generic",
+            mode_completer: options.ssh,
+        },
         "plugins/c9.ide.language.css/css",
         "plugins/c9.ide.language.html/html",
-        // "plugins/c9.ide.language.codeintel/codeintel",
         "plugins/c9.ide.language.javascript/javascript",
         "plugins/c9.ide.language.javascript.immediate/immediate",
         "plugins/c9.ide.language.javascript.infer/jsinfer",
@@ -403,7 +407,6 @@ module.exports = function(options) {
             }]
         },
         "plugins/c9.ide.language.javascript.tern/ui",
-
         "plugins/c9.ide.language.javascript.tern/architect_resolver",
         "plugins/c9.ide.language.javascript.eslint/eslint",
         {
@@ -603,7 +606,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.keys/panel"
         },
         {
-            packagePath: "plugins/c9.ide.language/outline",
+            packagePath: "plugins/c9.ide.language.core/outline",
             staticPrefix: staticPrefix + "/plugins/c9.ide.language"
         },
         {
@@ -693,20 +696,17 @@ module.exports = function(options) {
                 pubkey: options.user.pubkey,
                 date_add: options.user.date_add,
                 active: options.user.active,
-                alpha: options.user.alpha,
-                beta: options.user.beta,
                 c9version: options.user.c9version,
-                no_newsletter: options.user.no_newsletter,
-                subscription_on_signup: options.user.subscription_on_signup,
                 premium: options.user.premium,
-                region: options.user.region
+                region: options.user.region,
             },
             project: {
                 id: options.project.id,
                 name: options.project.name,
                 contents: options.project.contents,
                 descr: options.project.descr,
-                remote: options.project.remote
+                remote: options.project.remote,
+                premium: options.project.premium,
             }
         },
         {
@@ -725,14 +725,15 @@ module.exports = function(options) {
             basePath: workspaceDir
         },
         {
-            packagePath: "plugins/c9.ide.help.support/support",
-            baseurl: options.ideBaseUrl, 
-            userSnapApiKey: options.support.userSnapApiKey,
-            screenshotSupport: true
-        },
-        {
             packagePath: "plugins/c9.ide.help/help",
             staticPrefix: staticPrefix + "/plugins/c9.ide.help"
+        },
+        {
+            packagePath: "plugins/c9.ide.guide/guide",
+            staticPrefix: staticPrefix + "/plugins/c9.ide.guide"
+        },
+        {
+            packagePath: "plugins/c9.ide.guide/default"
         },
         {
             packagePath: "plugins/c9.ide.configuration/configure",
@@ -759,7 +760,6 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.behaviors/page",
             staticPrefix: staticPrefix + "/plugins/c9.ide.behaviors"
         },
-        "plugins/c9.ide.browsersupport/browsersupport",
         {
             packagePath: "plugins/c9.ide.preferences/preferences",
             staticPrefix: staticPrefix + "/plugins/c9.ide.preferences"
@@ -795,8 +795,7 @@ module.exports = function(options) {
         
         // Test
         {
-            packagePath: "plugins/c9.ide.test/test",
-            enabled: true
+            packagePath: "plugins/c9.ide.test/test"
         },
         "plugins/c9.ide.test/testpanel",
         "plugins/c9.ide.test/testrunner",
@@ -810,13 +809,28 @@ module.exports = function(options) {
         
         "plugins/c9.ide.test.mocha/mocha",
         
+        // git integration v2
+        // {
+        //     packagePath: "plugins/c9.ide.scm/scm.commit",
+        //     staticPrefix: staticPrefix + "/plugins/c9.ide.scm"
+        // },
+        // "plugins/c9.ide.scm/scm",
+        // "plugins/c9.ide.scm/scm.branches",
+        // "plugins/c9.ide.scm/dialog.localchanges",
+        // "plugins/c9.ide.scm/scm.log",
+        // "plugins/c9.ide.scm/git",
+        // "plugins/c9.ide.scm/diff.split",
+        // "plugins/c9.ide.scm/diff.unified",
+
+        // // git integration v1
+        "plugins/c9.ide.scm/v1/scm",
+        "plugins/c9.ide.scm/v1/scmpanel",
+        "plugins/c9.ide.scm/v1/detail",
+        "plugins/c9.ide.scm/v1/log",
+        "plugins/c9.ide.scm/v1/git",
+        "plugins/c9.ide.scm/v1/editor",
+        
         // git integration
-        "plugins/c9.ide.scm/scm",
-        "plugins/c9.ide.scm/scmpanel",
-        "plugins/c9.ide.scm/detail",
-        "plugins/c9.ide.scm/log",
-        "plugins/c9.ide.scm/git",
-        "plugins/c9.ide.scm/editor",
         "plugins/c9.ide.scm/mergetool",
 
         // Ethergit plugins
@@ -844,26 +858,7 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor",
         "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
-
-    if (!options.sdk) {
-        plugins.push(
-            // Test
-            {
-                packagePath: "plugins/c9.ide.test/test"
-            },
-            "plugins/c9.ide.test/testpanel",
-            "plugins/c9.ide.test/testrunner",
-            {
-                packagePath: "plugins/c9.ide.test/all",
-                staticPrefix: staticPrefix + "/plugins/c9.ide.test"
-            },
-            "plugins/c9.ide.test/results",
-            "plugins/c9.ide.test/coverage",
-            "plugins/c9.ide.test/coverageview",
-            
-            "plugins/c9.ide.test.mocha/mocha"
-        );
-    }
+    
     
     if (packaging || !devel) {
         plugins.push({
@@ -948,6 +943,16 @@ module.exports = function(options) {
 //            staticPrefix: staticPrefix + "/plugins/c9.ide.collab/chat"
 //        }
         );
+    }
+
+    if (options.platform !== "win32") {
+        plugins.push({
+            packagePath: "plugins/c9.ide.language.codeintel/codeintel",
+            preinstalled: hosted && !options.ssh,
+            paths: {
+                php: ".:./vendor",
+            },
+        });
     }
 
     return plugins;
