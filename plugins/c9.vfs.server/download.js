@@ -44,11 +44,11 @@ define(function(require, exports, module) {
                     filename += (paths.length > 1 ? "[+" + (paths.length - 1) + "]"  : "") + ".tar.gz";
                 }
             }
-            var filenameHeader = "attachment; filename*=utf-8''" + encodeURIComponent(filename);
+            var filenameHeader = "attachment; filename*=utf-8''" + escape(filename);
 
-            var process;
+            var proc;
             req.on("close", function() {
-                if (process) process.kill();
+                if (proc) proc.kill();
             });
             
             if (req.uri.query.isfile) {
@@ -73,6 +73,17 @@ define(function(require, exports, module) {
                         meta.stream.pipe(res);
                     });
                     
+                    meta.stream.once("close", function() {
+                        if (res.headerSent)
+                            return;
+                            
+                        res.writeHead(200, {
+                            "Content-Type": "octet/stream",
+                            "Content-Disposition": filenameHeader
+                        });
+                        res.end();
+                    });
+                    
                     meta.stream.on("error", function(err){
                         res.writeHead(500);
                         res.end(err.message);
@@ -80,69 +91,92 @@ define(function(require, exports, module) {
                 });
             }
             else {
-                // TODO add support for downloding as zip on windows
-                // var cwd;
-                // var args = ["-r", "-"];
-                // paths.forEach(function(path) {
-                //     if (!path) return;
-                //     var dir = Path.dirname(path);
-                //     if (!cwd) cwd = dir;
-                //     var name = Path.relative(cwd, path);
-                //     if (name[0] == "-") name = "./" + name;
-                //     args.push(name);
-                // });
-                // vfs.spawn("zip", { args: args, cwd: cwd }
-                
-                var args = ["-zcf", "-"];
-                paths.forEach(function(path) {
+                var executable, args, contentType;
+
+                if (/\.zip$/.test(filename)) {
+                    executable = "zip";
+                    args = ["-r", "-", "--"];
+                    contentType = "application/zip"
+                }
+                else {
+                    executable = "tar";
+                    args = ["-zcf", "-", "--"];
+                    contentType = "application/x-gzip"
+                }
+
+                // Find the longest common parent directory of all the paths.
+                var cwd = null;
+                paths.forEach(function (path) {
                     if (!path) return;
                     var dir = Path.dirname(path);
-                    var name = Path.basename(path);
-                    if (name[0] == "-")
-                        name = "--add-file=" + name;
-                    args.push("-C" + dir, name);
+                    if (!cwd) {
+                        cwd = dir;
+                    }
+                    else {
+                        var relative = Path.relative(cwd, dir).split(Path.sep);
+                        var i = 0;
+                        while (relative[i] === '..') {
+                            cwd = Path.resolve(cwd, '..');
+                            i++;
+                        }
+                    }
                 });
-                vfs.spawn("tar", { args: args }, function (err, meta) {
+                paths.forEach(function(path) {
+                    if (!path) return;
+                    path = Path.relative(cwd, path);
+                    if (process.platform == "win32") {
+                        // Quote the path to escape unusual characters and spaces.
+                        // NB: Double quotes are illegal within the actual path on Windows.
+                        path = '"' + path.replace(/"/g, "") + '"';
+                    }
+                    args.push(path);
+                });
+
+                vfs.spawn(executable, {
+                    args: args,
+                    cwd: cwd,
+                    windowsVerbatimArguments: true // Prevents Node from escaping the double quotes added above.
+                }, function (err, meta) {
                     if (err)
                         return next(err);
-                        
-                    process = meta.process;
-    
-                    // once we receive data on stdout pipe it to the response        
-                    process.stdout.once("data", function (data) {
+
+                    proc = meta.process;
+
+                    // once we receive data on stdout pipe it to the response
+                    proc.stdout.once("data", function (data) {
                         if (res.headerSent)
                             return;
                             
                         res.writeHead(200, {
-                            "Content-Type": "application/x-gzip",
+                            "Content-Type": contentType,
                             "Content-Disposition": filenameHeader
                         });
                         res.write(data);
-                        process.stdout.pipe(res);
+                        proc.stdout.pipe(res);
                     });
             
                     var stderr = "";
-                    process.stderr.on("data", function (data) {
+                    proc.stderr.on("data", function (data) {
                         stderr += data;
                     });
-                    
-                    process.on("exit", function(code, signal) {
+
+                    proc.on("exit", function(code, signal) {
                         if (res.headerSent)
                             return;
                             
                         var err;
                         if (code == 127) {
                             err = new error.PreconditionFailed(
-                                "Your instance seems to be missing the 'tar' utility\n" + 
+                                "Your instance seems to be missing the '" + executable + "' utility\n" +
                                 "If you are using an SSH workspace, please do:\n" +
-                                "    'sudo apt-get install tar'");
+                                "    'sudo apt-get install " + executable + "'");
                         } else if (code) {
                             err = new error.InternalServerError(
-                                "'tar' utility failed with exit code " + code + 
+                                "'" + executable + "' utility failed with exit code " + code +
                                 " and stderr:/n'" + stderr + "'");
                         } else if (signal) {
                             err = new error.InternalServerError(
-                                "'tar' utility was terminated by signal " + signal
+                                "'" + executable + "' utility was terminated by signal " + signal
                             );
                         }
                         

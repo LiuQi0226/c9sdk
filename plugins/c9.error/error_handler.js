@@ -115,6 +115,7 @@ function plugin(options, imports, register) {
         var accept = req.headers.accept || '';
 
         if (statusCode == 500) {
+            console.error(err && err.stack);
             emitter.emit("internalServerError", {
                 err: err,
                 req: req
@@ -131,7 +132,8 @@ function plugin(options, imports, register) {
             
             var allowedErrorKeys = [
                 "message", "projectState", "premium", "retryIn", "progress",
-                "oldHost", "blocked", "className", "errors", "subtype"
+                "oldHost", "blocked", "className", "errors", "subtype",
+                "fatal", "ignore"
             ];
             
             allowedErrorKeys.forEach(function(key) {

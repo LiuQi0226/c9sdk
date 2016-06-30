@@ -35,6 +35,10 @@ define(function(require, exports, module) {
                 cb && cb(err, files);
             });
         };
+        model.shouldLoadChildren = function(node, ch) {
+            return node.status == "pending"
+                || (node.path && node.isFolder && !ch);
+        };
         model.getClassName = function(node) {
             var cl = node.className || "";
             if (node.link)
@@ -82,6 +86,9 @@ define(function(require, exports, module) {
                         node.status = "pending";
                     return;
                 }
+                var parentPath = e.path;
+                if (!parentPath.endsWith("/"))
+                    parentPath += "/";
                 // update cache
                 if (!node) {
                     if (!showHidden && isFileHidden(e.path))
@@ -92,96 +99,115 @@ define(function(require, exports, module) {
                     orphans[e.path] = node;
                     orphan = true;
                 }
+                node.$lastReadT = Date.now();
 
                 // Indicate this directory has been fully read
                 model.setAttribute(node, "status", "loaded");
                 
-                var wasOpen = startUpdate(node);
-                node.children = null;
-                var existing = node.map || {};
-                node.map = {};
-                
-                // Fill Parent
-                var ondisk = {}, toAppend = [];
+                var ondisk = Object.create(null);
+                var toRemove = [];
+                var toCreate = [];
+                var orphanAppand = [];
+                var existing = node.map || (node.map = Object.create(null));
                 e.result[1].forEach(function(stat) {
                     if (!stat.name || !showHidden && isFileHidden(stat.name))
                         return;
-                        
                     var name = stat.name;
-                    var path = (e.path + "/" + name).replace("//", "/");
+                    var path = parentPath + name;
 
                     ondisk[name] = 1;
-                    // if (existing[name]) return;
+                    
                     if (orphans[path]) {
-                        toAppend.push(path);
+                        if (existing[name])
+                            delete orphans[path];
+                        orphanAppand.push(path);
                     }
-                    createNode(path, stat, existing[name], true);
+                    
+                    if (existing[name])
+                        updateNodeStat(path, stat, existing[name]);
+                    else
+                        toCreate.push(stat);
                 });
                 
-                for (var name in existing) {
-                    if (!ondisk[name]) {
-                        // onreaddir can be called before copied nodes are written to disk
-                        // in this case we don't want to lose "predicted" state
-                        if (existing[name] && existing[name].status === "predicted")
-                            node.map[name] = existing[name];
-                        else {
-                            delete existing[name];
-                            
-                            emit("remove", {
-                                path: e.path + "/" + name,
-                                node: existing[name],
-                                parent: node
-                            });
-                        }
-                    }
-                }
+                Object.keys(existing).forEach(function(name) {
+                    // onreaddir can be called before copied nodes are written to disk
+                    // in this case we don't want to lose "predicted" state
+                    if (existing[name] && existing[name].status === "predicted")
+                        ondisk[name] = 1;
+                    if (!ondisk[name])
+                        toRemove.push(name);
+                });
+                
+                if (!toCreate.length && !toRemove.length && !orphanAppand.length)
+                    return;
+                
+                var wasOpen = startUpdate(node);
+                node.children = null;
+                
+                // Fill Parent
+                toCreate.forEach(function(stat) {
+                    createNode(parentPath + stat.name, stat, null, true);
+                });
+                
+                toRemove.forEach(function(name) {
+                    var currentNode = existing[name];
+                    delete existing[name];
+                    emit("remove", {
+                        path: parentPath + name,
+                        node: currentNode,
+                        parent: node
+                    });
+                });
                 
                 emit("readdir", { path : e.path, parent : node, orphan: orphan });
                 
                 endUpdate(node, wasOpen);
                 
-                toAppend.forEach(function(path) {
+                orphanAppand.forEach(function(path) {
                     emit("orphan-append", {path: path});
                 });
             }
             fs.on("afterReaddir", onreaddir, plugin);
             
             function onstat(e) {
-                var stat;
+                if (e.error) return;
                 
-                if (!e.error) {
-                    // update cache
-                    var there = true;
-                    var node = findNode(e.path);
-                    var parent = findNode(dirname(e.path));
-                    
-                    if (!showHidden && isFileHidden(e.path))
-                        return;
+                // update cache
+                var stat = e.result[1];
+                
+                var there = true;
+                var node = findNode(e.path);
+                var parent = findNode(dirname(e.path));
+                
+                if (!showHidden && isFileHidden(e.path))
+                    return;
 
-                    if (!node) { 
-                        if (!parent) 
-                            return;
-                        there = false;
+                if (!node) { 
+                    if (!parent) 
+                        return;
+                    there = false;
+                }
+                
+                if (there != !!stat) {
+                    if (there) {
+                        if (!node.link)
+                            deleteNode(node);
                     }
-                    
-                    if (there != !!e.result[1]) {
-                        if (there) {
-                            if (!node.link)
-                                deleteNode(node);
-                        }
-                        else {
-                            stat = e.result[1];
-                            if (typeof stat != "object")
-                                stat = null;
-                            createNode(e.path, stat);
-                        }
-                    }
-                    else if (there) {
-                        stat = e.result[1];
+                    else {
                         if (typeof stat != "object")
                             stat = null;
-                        createNode(e.path, stat, node);
+                        createNode(e.path, stat);
                     }
+                }
+                else if (there) {
+                    if (typeof stat != "object")
+                        stat = null;
+                    if (!stat && node)
+                        return;
+                    if (stat && node)
+                        updateNodeStat(e.path, stat, node);
+                    else
+                        createNode(e.path, stat, node);
                 }
             }
             fs.on("afterStat", onstat, plugin);
@@ -232,7 +258,7 @@ define(function(require, exports, module) {
                     };
                     e.confirm = function () {
                         if (node.status === "predicted")
-                            node.status = "loaded";
+                            node.status = "pending";
                     };
                     node.status = "predicted";
                 }
@@ -240,7 +266,7 @@ define(function(require, exports, module) {
             
             function removeSingleNode(e) {
                 var node = findNode(e.path);
-                if (!node) return; //Node doesn't exist
+                if (!node) return; // Node doesn't exist
                 
                 deleteNode(node);
                 emit("remove", {
@@ -248,8 +274,9 @@ define(function(require, exports, module) {
                     node: node
                 });
                 
-                // todo
                 e.undo = function(){
+                    if (this.error && this.error.code == "ENOENT") 
+                        return;
                     createNode(node.path, null, node);
                     emit("add", {
                         path: node.path,
@@ -295,14 +322,15 @@ define(function(require, exports, module) {
                 // Validation
                 var toNode = findNode(newPath);
                 
-                deleteNode(node, true);
-                if (toNode)
-                    deleteNode(toNode, true);
-                
-                createNode(newPath, null, node); // Move node
-                recurPathUpdate(node, oldPath, newPath);
+                if (!toNode) {
+                    deleteNode(node, true);
+                    createNode(newPath, null, node); // Move node
+                    recurPathUpdate(node, oldPath, newPath);
+                }
                 
                 e.undo = function(){
+                    if (toNode)
+                        return;
                     if (!parent) {
                         var tmpParent = node;
                         while (node.parent && tmpParent.parent.status == "pending")
@@ -318,8 +346,14 @@ define(function(require, exports, module) {
                     recurPathUpdate(node, newPath, oldPath);
                 };
                 e.confirm = function() {
+                    if (toNode) {
+                        deleteNode(toNode, true);
+                        createNode(newPath, null, node); // Move node
+                        recurPathUpdate(node, oldPath, newPath);
+                    }
+                    
                     if (node.status === "predicted")
-                        node.status = "loaded";
+                        node.status = "pending";
                 };
                 node.status = "predicted";
             }, plugin);
@@ -340,10 +374,10 @@ define(function(require, exports, module) {
                     createNode(dir, {mime: "folder"});
                 });
                 
-                if (!dirsToMake[0])
+                var node = dirsToMake[0] && findNode(dirsToMake[0]);
+                if (!node)
                     return;
                 
-                var node = findNode(dirsToMake[0]);
                 e.undo = function(){
                     dirsToMake.forEach(function(dir) {
                         var node = findNode(dir);
@@ -353,7 +387,7 @@ define(function(require, exports, module) {
                 };
                 e.confirm = function() {
                     if (node.status === "predicted")
-                        node.status = "loaded";
+                        node.status = "pending";
                 };
                 node.status = "predicted";
             }, plugin);
@@ -511,14 +545,8 @@ define(function(require, exports, module) {
                 updateNode = orphans[path];
                 delete orphans[path];
             }
-            var original_stat;
-            if (stat && stat.link) {
-                original_stat = stat;
-                stat = stat.linkStat;
-            }
             
             var parts = path.split("/");
-            var name = parts[parts.length - 1];
             var node = model.root.map[parts[0] == "~" ? "~" : ""];
             if (!node) {
                 node = orphans[parts[0]];
@@ -537,7 +565,7 @@ define(function(require, exports, module) {
                 
                 var map = node.map;
                 if (!map) {
-                    map = node.map = {};
+                    map = node.map = Object.create(null);
                 }
                 parent = node;
                 node = map[p];
@@ -545,6 +573,11 @@ define(function(require, exports, module) {
                     modified.push(parent);
                     if (i !== parts.length - 1) {
                         node = {label: p, path: subPath, status: "pending", isFolder: true};
+                        // TODO filter hidden files in getChildren instead.
+                        if (!showHidden && isFileHidden(p)) {
+                            orphans[node.path] = node;
+                            return;
+                        }
                     } else if (updateNode) {
                         deleteNode(updateNode, true);
                         node = updateNode;
@@ -564,8 +597,32 @@ define(function(require, exports, module) {
                 node = {label: parts[parts.length - 1], path: path};
                 orphans[path] = node;
             }
+            
+            updateNodeStat(path, stat, node); 
+            
+            node.children = null;
+            
+            if (!updating) {
+                if (!modified.length)
+                    modified.push(parent);
+                var wasOpen = startUpdate(modified[0]);
+                modified.forEach(function(n) {
+                    if (n != model.root)
+                        n.children = null;
+                });
+                endUpdate(modified[0], wasOpen);
+            }
+            model._signal("createNode", node);
+            return node;
+        }
+        
+        function updateNodeStat(path, stat, node) {
             node.path = path;
-
+            var original_stat;
+            if (stat && stat.link) {
+                original_stat = stat;
+                stat = stat.linkStat;
+            }
             if (stat) {
                 var isFolder = stat && /(directory|folder)$/.test(stat.mime);
                 if (isFolder) {
@@ -589,25 +646,13 @@ define(function(require, exports, module) {
                     delete node.isFolder;
             }
             
-            if (node.isFolder && !node.map)
-                node.map = {};
-            else if (!node.isFolder && node.map)
+            if (node.isFolder && !node.map) {
+                node.map = Object.create(null);
+                node.children = null;
+            } else if (!node.isFolder && node.map) {
                 delete node.map;
-            
-            node.children = null;
-            
-            if (!updating) {
-                if (!modified.length)
-                    modified.push(parent);
-                var wasOpen = startUpdate(modified[0]);
-                modified.forEach(function(n) {
-                    if (n != model.root)
-                        n.children = null;
-                });
-                endUpdate(modified[0], wasOpen);
+                node.children = null;
             }
-            model._signal("createNode", node);
-            return node;
         }
         
         function deleteNode(node, silent) {
@@ -623,6 +668,11 @@ define(function(require, exports, module) {
                     parentPath: node.parent && node.parent.path
                 });
                 return;
+            }
+            if (orphans[node.path] == node) {
+                delete orphans[node.path];
+                if (parent.map[node.label] != node)
+                    return;
             }
             silent || model._signal("remove", node);
             var wasOpen = startUpdate(parent);
@@ -667,10 +717,10 @@ define(function(require, exports, module) {
                 status: "pending",
                 className: "projectRoot",
                 isEditable: false,
-                map: {}
+                map: Object.create(null)
             };
             var root = {};
-            root.map = {};
+            root.map = Object.create(null);
             root.map[""] = model.projectDir;
             model.setRoot(root);
             // fs.readdir("/", function(){});
@@ -894,7 +944,12 @@ define(function(require, exports, module) {
              * @param {Function} progress
              * @param {Function} done
              */
-            loadNodes: loadNodes
+            loadNodes: loadNodes,
+            
+            /**
+             * @ignore
+             */
+            isFileHidden: isFileHidden
         });
         
         register(null, {

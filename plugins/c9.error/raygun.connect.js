@@ -84,12 +84,16 @@ function plugin(options, imports, register) {
     }
     
     function _sendRequest(raygunClient, err, req) {
+        if (typeof err == "string")
+            err = new Error(err);
+
         var parsedUrl = url.parse(req.url, false);
         var ip = req.remoteAddress;
 
         var customData = _.clone(raygun.customData || {});
         if (req.user) {
             customData.user = {
+                augment: err.augment,
                 id: req.user.id,
                 name: req.user.name,
                 email: req.user.email

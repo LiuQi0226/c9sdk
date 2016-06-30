@@ -385,6 +385,7 @@ define(function(require, module, exports) {
                 
                 open({
                     path: name,
+                    focus: true,
                     active: true,
                     pane: e.pane,
                     value: "",
@@ -1283,7 +1284,7 @@ define(function(require, module, exports) {
                 
                 // Or keep tab until the new one is loaded
                 else {
-                    previewTab.unload();
+                    previewTab.unload({ animate: false });
                 }
             }
 

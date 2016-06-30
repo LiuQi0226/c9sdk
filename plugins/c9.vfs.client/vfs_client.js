@@ -146,6 +146,7 @@ define(function(require, exports, module) {
         
         function rest(path, options, callback) {
             if (!vfs || !connection || connection.readyState != "open") {
+                // console.error("[vfs-client] Cannot perform rest action for ", path, " vfs is disconnected");
                 var stub = { abort: function(){ buffer[this.id]= null; } };
                 stub.id = buffer.push([path, options, callback, stub]) - 1;
                 return stub;
@@ -197,17 +198,19 @@ define(function(require, exports, module) {
             }
             window.open(vfsUrl(path) + extraPaths
                 + "?download" 
-                + (filename ? "=" + escape(filename) : "")
+                // Escape '+', otherwise it gets interpreted as a space.
+                + (filename ? "=" + escape(filename) : "").replace(/\+/g, "%2B")
                 + (isfile ? "&isfile=1" : ""));
         }
 
         function reconnectNow() {
             reconnect(function(_err) {
-                connection.connect();
+                connection && connection.connect();
             });
         }
         
         function reconnect(callback) {
+            if (!connection) return;
             connection.socket.setSocket(null);
             
             vfsEndpoint.get(protocolVersion, function(err, urls) {
@@ -238,9 +241,10 @@ define(function(require, exports, module) {
                     path: parsedSocket.path,
                     host: parsedSocket.host,
                     port: parsedSocket.port 
-                        || parsedSocket.protocol == "https:" ? "443" : null,
+                        || (parsedSocket.protocol == "https:" ? "443" : null),
                     secure: parsedSocket.protocol 
-                        ? parsedSocket.protocol == "https:" : true
+                        ? parsedSocket.protocol == "https:" : true,
+                    rejectUnauthorized: options.rejectUnauthorized
                 };
                 callback();
             });
@@ -253,7 +257,7 @@ define(function(require, exports, module) {
                         err.message = "SSH permission denied. Please review your workspace configuration.";
                     return showAlert("Workspace Error", "Unable to access your workspace", err.message, function() {
                         window.location = dashboardUrl;
-                    });
+                    }, { yes: "Return to dashboard" });
                 case "reload":
                     lastError = showError(err.message + ". Please reload this window.", -1);
                     setTimeout(function() {
@@ -327,6 +331,13 @@ define(function(require, exports, module) {
                 bufferedVfsCalls.push([method, path, options, callback]);
         }
         
+        function isIdle() {
+            if (!connection || !consumer)
+                return false;
+            return !Object.keys(connection.unacked).length &&
+                !Object.keys(consumer.callbacks || {}).length;
+        }
+        
         /***** Lifecycle *****/
         
         plugin.on("load", function(){
@@ -334,6 +345,12 @@ define(function(require, exports, module) {
         });
         plugin.on("unload", function(){
             loaded = false;
+            if (connection && connection.socket)
+                connection.socket.destroying = true;
+            if (consumer)
+                consumer.disconnect();
+            if (connection)
+                connection.disconnect();
             
             id = null;
             buffer = [];
@@ -345,6 +362,7 @@ define(function(require, exports, module) {
             serviceUrl = null;
             eioOptions = null;
             consumer = null;
+            connection = null;
             vfs = null;
             showErrorTimer = null;
             showErrorTimerMessage = null;
@@ -421,7 +439,9 @@ define(function(require, exports, module) {
             // Extending the API
             use: vfsCall.bind(null, "use"),
             extend: vfsCall.bind(null, "extend"),
-            unextend: vfsCall.bind(null, "unextend")
+            unextend: vfsCall.bind(null, "unextend"),
+            
+            isIdle: isIdle,
         });
         
         register(null, {
