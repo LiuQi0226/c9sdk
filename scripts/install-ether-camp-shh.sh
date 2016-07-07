@@ -19,6 +19,9 @@ done
 cd ./plugins
 git clone ssh://git@github.com/etherj/ethergit.solidity.language.git
 git clone ssh://git@github.com/etherj/ethergit.solidity.compiler.git
+cd ethergit.solidity.compiler
+git checkout $ETHERGIT_SOLIDITY_COMPILER_BRANCH
+cd ..
 
 git clone ssh://git@github.com/etherj/ethergit.ethereum.sandbox.git
 cd ethergit.ethereum.sandbox
