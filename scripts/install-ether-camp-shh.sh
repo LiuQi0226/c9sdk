@@ -9,15 +9,23 @@ case $key in
     ETHERGIT_ETHEREUM_SANDBOX_BRANCH="$2"
     shift # past argument
     ;;
+    --ethergit-solidity-compiler-branch)
+    ETHERGIT_SOLIDITY_COMPILER_BRANCH="$2"
+    shift # past argument
+    ;;
     *)
-            # unknown option
+    # unknown option
     ;;
 esac
 shift # past argument or value
 done
 
+echo $ETHERGIT_SOLIDITY_COMPILER_BRANCH
+echo $ETHERGIT_ETHEREUM_SANDBOX_BRANCH
+
 cd ./plugins
 git clone ssh://git@github.com/etherj/ethergit.solidity.language.git
+
 git clone ssh://git@github.com/etherj/ethergit.solidity.compiler.git
 cd ethergit.solidity.compiler
 git checkout $ETHERGIT_SOLIDITY_COMPILER_BRANCH
