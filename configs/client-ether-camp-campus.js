@@ -870,7 +870,8 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/feedback/feedback",
         "plugins/ethergit.ethereum.sandbox/publish/publish",
         "plugins/ethergit.ethereum.sandbox/notifications/notifications",
-        "plugins/ethereum.studio.oraclize/oraclize.js"
+        "plugins/ethereum.studio.oraclize/oraclize.js",
+        "plugins/ethergit.ethereum.sandbox/solidity-debugger/debugger.js"
     ];
     
     
