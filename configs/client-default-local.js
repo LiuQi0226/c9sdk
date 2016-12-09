@@ -2,7 +2,7 @@ var join = require("path").join;
 
 module.exports = function(options) {
     options.collab = false;
-    var config = require("./client-default")(options);
+    var config = require("./client-ether-camp-standalone")(options);
     return module.exports.makeLocal(config, options);
 };
 
@@ -77,6 +77,8 @@ module.exports.makeLocal = function(config, options) {
         } else if (config[i].packagePath == "plugins/c9.ide.errorhandler/raygun_error_handler") {
             // TODO fix cycle introduced by local/info and raygun_error_handler
             config[i].packagePath = "plugins/c9.ide.errorhandler/simple_error_handler";
+        } else if (config[i].packagePath == "plugins/ethergit.ethereum.sandbox/send_to_net_dialog/dialog") {
+            config[i].mode = "local";
         }
     }
 

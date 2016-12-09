@@ -2,7 +2,7 @@ module.exports = function(config, optimist) {
     
     var path = require("path");
     
-    if (!optimist.local) {
+//    if (!optimist.local) {
         optimist
             .boolean("t")
             .describe("t", "Start in test mode")
@@ -42,7 +42,7 @@ module.exports = function(config, optimist) {
             .describe("inProcessLocalFs", "Whether to run localfs in same process for debugging.")
             .default("inProcessLocalFs", config.inProcessLocalFs)
             .boolean("useBrowserCache");
-    }
+//    }
     
     var argv = optimist.argv;
     if (argv.help)
