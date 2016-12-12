@@ -43,6 +43,8 @@ module.exports = function(config, optimist) {
             .default("inProcessLocalFs", config.inProcessLocalFs)
             .describe("studioMode", "Run Ethereum Studio in remote or local mode")
             .default("studioMode", "remote")
+            .describe("solc", "Path to solc binary")
+            .default("solc", "solc")
             .boolean("useBrowserCache");
 //    }
     
@@ -112,6 +114,7 @@ module.exports = function(config, optimist) {
     }
 
     config.studioMode = argv.studioMode;
+    config.solc = argv.solc;
 
     var plugins = [
         {

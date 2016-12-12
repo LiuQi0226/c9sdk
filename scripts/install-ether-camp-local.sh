@@ -1,6 +1,11 @@
 cd plugins
 git clone https://github.com/etherj/ethergit.solidity.language.git
+
 git clone https://github.com/etherj/ethergit.solidity.compiler.git
+cd ethergit.solidity.compiler
+git fetch origin
+git checkout -b feature/local origin/feature/local
+cd ..
 
 git clone https://github.com/etherj/ethergit.ethereum.sandbox.git
 cd ethergit.ethereum.sandbox

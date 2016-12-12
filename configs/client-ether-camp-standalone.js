@@ -841,7 +841,10 @@ module.exports = function(options) {
             readonly: false
         },
         "plugins/ethergit.libs/libs",
-        "plugins/ethergit.solidity.compiler/compiler",
+        {
+            packagePath: "plugins/ethergit.solidity.compiler/compiler",
+            solc: options.solc
+        },
         "plugins/ethergit.ethereum.sandbox/sandbox",
         "plugins/ethergit.ethereum.sandbox/sandbox_panel",
         "plugins/ethergit.ethereum.sandbox/transactions_dialog",
@@ -862,7 +865,6 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor",
         "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
-    
     
     if (packaging || !devel) {
         plugins.push({
