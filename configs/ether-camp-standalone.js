@@ -41,6 +41,8 @@ module.exports = function(config, optimist) {
             .boolean("inProcessLocalFs")
             .describe("inProcessLocalFs", "Whether to run localfs in same process for debugging.")
             .default("inProcessLocalFs", config.inProcessLocalFs)
+            .describe("studioMode", "Run Ethereum Studio in remote or local mode")
+            .default("studioMode", "remote")
             .boolean("useBrowserCache");
 //    }
     
@@ -108,6 +110,8 @@ module.exports = function(config, optimist) {
         console.log("Run using --listen localhost instead to only expose Cloud9 to localhost,");
         console.log("or use -a username:password to setup HTTP authentication\n");
     }
+
+    config.studioMode = argv.studioMode;
 
     var plugins = [
         {
