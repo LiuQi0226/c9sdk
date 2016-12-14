@@ -862,6 +862,7 @@ module.exports = function(options) {
             packagePath: "plugins/ethergit.ethereum.sandbox/send_to_net_dialog/dialog",
             mode: options.studioMode
         },
+        "plugins/ethergit.ethereum.sandbox/send_to_net_dialog/upload_sources_to_harmony_dialog",
         "plugins/ethergit.ethereum.sandbox/sent_txs_editor/editor",
         "plugins/ethergit.ethereum.sandbox/feedback/feedback"
     ];
