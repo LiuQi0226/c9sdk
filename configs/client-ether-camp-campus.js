@@ -871,7 +871,9 @@ module.exports = function(options) {
         "plugins/ethergit.ethereum.sandbox/publish/publish",
         "plugins/ethergit.ethereum.sandbox/notifications/notifications",
         "plugins/ethereum.studio.oraclize/oraclize.js",
-        "plugins/ethergit.ethereum.sandbox/solidity-debugger/debugger.js"
+        "plugins/ethergit.ethereum.sandbox/solidity-debugger/debugger.js",
+        "plugins/ethergit.ethereum.sandbox/scenarios/dialog",
+        "plugins/ethergit.ethereum.sandbox/scenario/dialog"
     ];
     
     
