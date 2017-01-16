@@ -13,6 +13,10 @@ case $key in
     ETHERGIT_SOLIDITY_COMPILER_BRANCH="$2"
     shift # past argument
     ;;
+    --ethergit-libs-branch)
+    ETHERGIT_LIBS_BRANCH="$2"
+    shift # past argument
+    ;;
     *)
     # unknown option
     ;;
