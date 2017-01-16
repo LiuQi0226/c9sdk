@@ -38,7 +38,12 @@ cd ..
 
 git clone ssh://git@github.com/etherj/ethergit.guests.count.git
 git clone ssh://git@github.com/etherj/ether.camp.server.git
+
 git clone ssh://git@github.com/etherj/ethergit.libs.git
+cd ethergit.libs
+git checkout $ETHERGIT_LIBS_BRANCH
+cd ..
+
 # plugins
 git clone ssh://git@github.com/oraclize/ethereum-studio-ide-plugin.git ethereum.studio.oraclize
 cd ../
