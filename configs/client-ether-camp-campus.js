@@ -712,13 +712,6 @@ module.exports = function(options) {
             }
         },
         {
-            packagePath: "plugins/c9.ide.welcome/welcome",
-            staticPrefix: staticPrefix + "/plugins/c9.ide.welcome",
-            intro: "Welcome to Cloud9. Use this welcome screen "
-              + "to tweak the look &amp; feel of the Cloud9 user interface. ",
-            checkOS: true
-        },
-        {
             packagePath: "plugins/c9.cli.bridge/bridge",
             startBridge: options.startBridge
         },
@@ -873,7 +866,15 @@ module.exports = function(options) {
         "plugins/ethereum.studio.oraclize/oraclize.js",
         "plugins/ethergit.ethereum.sandbox/solidity-debugger/debugger.js",
         "plugins/ethergit.ethereum.sandbox/scenarios/dialog",
-        "plugins/ethergit.ethereum.sandbox/scenario/dialog"
+        "plugins/ethergit.ethereum.sandbox/scenario/dialog",
+        {
+            packagePath: "plugins/ethergit.ethereum.sandbox/welcome/welcome",
+            staticPrefix: staticPrefix + "/plugins/ethergit.ethereum.sandbox/welcome",
+            intro: "Welcome to Ethereum Studio. Use this welcome screen "
+            + "to tweak the look &amp; feel of the Ethereum Studio user interface and "
+            + "run your first Ethereum project.",
+            checkOS: true
+        }
     ];
     
     
