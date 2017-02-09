@@ -577,13 +577,6 @@ module.exports = function(options) {
             }
         },
         {
-            packagePath: "plugins/c9.ide.welcome/welcome",
-            staticPrefix: staticPrefix + "/plugins/c9.ide.welcome",
-            intro: "Welcome to Cloud9. Use this welcome screen "
-              + "to tweak the look &amp; feel of the Cloud9 user interface. ",
-            checkOS: true
-        },
-        {
             packagePath: "plugins/c9.cli.bridge/bridge",
             startBridge: options.startBridge
         },
@@ -658,7 +651,17 @@ module.exports = function(options) {
         },
         "plugins/ethergit.ethereum.sandbox/guest_pane_resize_fix",
         "plugins/ethergit.guests.count/guests_count",
-        "plugins/ethergit.ethereum.sandbox/feedback/feedback"
+        "plugins/ethergit.ethereum.sandbox/feedback/feedback",
+        {
+            packagePath: "plugins/ethergit.ethereum.sandbox/welcome/welcome",
+            staticPrefix: staticPrefix + "/plugins/ethergit.ethereum.sandbox/welcome",
+            intro: "Welcome to Ethereum Studio. You are in read-only mode, so you cannot "
+            + "change the files. Use this welcome screen to tweak the look &amp; feel of "
+            + "the Ethereum Studio user interface.",
+            readonly: true,
+            checkOS: true
+        }
+
     ];
     
     

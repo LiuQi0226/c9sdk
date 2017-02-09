@@ -873,6 +873,7 @@ module.exports = function(options) {
             intro: "Welcome to Ethereum Studio. Use this welcome screen "
             + "to tweak the look &amp; feel of the Ethereum Studio user interface and "
             + "run your first Ethereum project.",
+            readonly: false,
             checkOS: true
         }
     ];
