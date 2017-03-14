@@ -862,6 +862,10 @@ module.exports = function(options) {
             + "run your first Ethereum project.",
             readonly: false,
             checkOS: true
+        },
+        {
+            packagePath: "plugins/ethergit.ethereum.sandbox/example",
+            exampleProjectVersion: 1
         }
     ];
     
