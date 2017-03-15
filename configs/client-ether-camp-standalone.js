@@ -866,7 +866,8 @@ module.exports = function(options) {
         {
             packagePath: "plugins/ethergit.ethereum.sandbox/example",
             exampleProjectVersion: 1
-        }
+        },
+        "plugins/ethereum.studio.oraclize/oraclize.js"
     ];
     
     
