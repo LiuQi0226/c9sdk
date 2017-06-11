@@ -7,7 +7,7 @@ module.exports = function(options) {
     assert(options.workspaceName, "Option 'workspaceName' must be set");
     assert(options.home, "Option 'home' must be set");
     assert(options.platform, "Option 'platform' must be set");
-    
+
     // normalize workspacedir and home paths
     function normalize(path) {
         path = path.replace(/([^/])\/$/, "$1");
@@ -23,7 +23,7 @@ module.exports = function(options) {
 
     var workspaceDir = options.workspaceDir;
     var debug = options.debug !== undefined ? options.debug : false;
-    
+
     var collab = options.collab;
     var packaging = options.packaging;
     var staticPrefix = options.staticPrefix;
@@ -35,7 +35,7 @@ module.exports = function(options) {
     var builders = options.builders || {};
     var hosted = !options.local && !options.dev;
     var devel = options.standalone && !options.local || options.mode === "devel" || options.mode == "onlinedev" || options.dev;
-    
+
     var localExtendFiles = options.localExtend || options.standalone;
     // allow extend code access only to C9-deveoped plugins
     var extendToken = options.extendToken || "token";
@@ -44,7 +44,7 @@ module.exports = function(options) {
         // C9
         {
             packagePath: "plugins/c9.core/c9",
-            
+
             startdate: new Date(),
             version: options.manifest.version + " (" + options.manifest.revision + ")",
             debug: debug,
@@ -108,7 +108,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.plugins/test",
             staticPrefix: staticPrefix + "/plugins/c9.ide.plugins"
         },
-        
+
         // VFS
         "plugins/c9.vfs.client/vfs.ping",
         "plugins/c9.vfs.client/vfs.log",
@@ -143,7 +143,7 @@ module.exports = function(options) {
             apiUrl: options.apiUrl,
             projectId: options.project.id
         },
-        
+
         // Editors
         "plugins/c9.ide.editors/document",
         {
@@ -169,7 +169,7 @@ module.exports = function(options) {
         },
         "plugins/c9.ide.editors/pane",
         "plugins/c9.ide.editors/undomanager",
-        
+
         "plugins/c9.ide.newresource/newresource",
         "plugins/c9.ide.newresource/open",
         "plugins/c9.ide.undo/undo",
@@ -209,8 +209,8 @@ module.exports = function(options) {
         },
         "plugins/c9.ide.ace.keymaps/keymaps",
         "plugins/c9.ide.ace.keymaps/cli",
-        
-        
+
+
         "plugins/c9.ide.ace.emmet/emmet",
         // Find
         {
@@ -235,7 +235,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.find.replace/findreplace",
             staticPrefix: staticPrefix + "/plugins/c9.ide.find.replace"
         },
-        
+
         // UI
         {
             packagePath: "plugins/c9.ide.ui/ui",
@@ -257,7 +257,7 @@ module.exports = function(options) {
         "plugins/c9.ide.ui/widgets.terminal",
         "plugins/c9.ide.ui/focus",
         "plugins/c9.ide.ui/lib_apf",
-        
+
         "plugins/c9.ide.dialog/dialog",
         "plugins/c9.ide.dialog.common/alert",
         "plugins/c9.ide.dialog.common/alert_internal",
@@ -282,7 +282,7 @@ module.exports = function(options) {
         },
         "plugins/c9.ide.dialog.file/file",
         "plugins/c9.ide.dialog.wizard/wizard",
-        
+
         // VFS
         "plugins/c9.fs/proc",
         "plugins/c9.fs/proc.apigen", // used only by disabled deploy plugins
@@ -298,7 +298,7 @@ module.exports = function(options) {
 //            dashboardUrl: options.dashboardUrl,
 //            readonly: options.readonly
 //        },
-        
+
         // Watcher
         "plugins/c9.ide.threewaymerge/threewaymerge",
         "plugins/c9.ide.watcher/watcher",
@@ -306,7 +306,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.watcher/gui",
             collab: collab
         },
-        
+
         // Language
         {
             packagePath: "plugins/c9.ide.language/language",
@@ -457,7 +457,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.run.debug/debuggers/v8/v8debugger",
             basePath: workspaceDir
         },
-        {  
+        {
             packagePath: "plugins/c9.ide.run.debug/debuggers/socket",
             nodeBin: nodeBin
         },
@@ -478,7 +478,7 @@ module.exports = function(options) {
 
         "plugins/c9.ide.run.debug.xdebug/xdebug",
         "plugins/c9.ide.run.debug/debuggers/gdb/gdbdebugger",
-        
+
         // Console
         {
             packagePath: "plugins/c9.ide.terminal/terminal",
@@ -515,7 +515,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.console/console",
             staticPrefix: staticPrefix + "/plugins/c9.ide.layout.classic",
             defaultState: options.project.scmurl ? {
-                type: "pane", 
+                type: "pane",
                 nodes: [{
                     type: "tab",
                     editorType: "terminal",
@@ -542,7 +542,7 @@ module.exports = function(options) {
                 }]
             } : null
         },
-        
+
         // Layout & Panels
         {
             packagePath: "plugins/c9.ide.layout.classic/layout",
@@ -597,7 +597,7 @@ module.exports = function(options) {
         {
             packagePath: "plugins/c9.ide.upload/upload_progress",
             staticPrefix: staticPrefix + "/plugins/c9.ide.layout.classic"
-        },        
+        },
         {
             packagePath: "plugins/c9.ide.navigate/navigate",
             loadListAtInit: false
@@ -617,7 +617,7 @@ module.exports = function(options) {
         "plugins/c9.ide.panels/panel",
         "plugins/c9.ide.panels/area",
         "plugins/c9.ide.processlist/processlist",
-        
+
         // Installer
         {
             packagePath: "plugins/c9.ide.installer/gui",
@@ -645,7 +645,7 @@ module.exports = function(options) {
             installSelfCheck: true,
             installPath: options.installPath
         },
-        
+
         // Previewer
         {
             packagePath: "plugins/c9.ide.preview/preview",
@@ -677,14 +677,14 @@ module.exports = function(options) {
         },
         // "plugins/c9.ide.remote/transports/debugger",
         // "plugins/c9.ide.remote/transports/websocket",
-        
+
         // Formatters
         "plugins/c9.ide.format/format",
         "plugins/c9.ide.format/formatters/jsbeautify",
-        
+
         // Other
         "plugins/c9.ide.download/download",
-        
+
         {
             packagePath: "plugins/c9.ide.info/info",
             installPath: options.installPath,
@@ -785,7 +785,7 @@ module.exports = function(options) {
             packagePath: "plugins/c9.ide.collab/notifications/bubble",
             staticPrefix: staticPrefix + "/plugins/c9.ide.collab/notifications"
         },
-        
+
         // Test
         {
             packagePath: "plugins/c9.ide.test/test",
@@ -800,9 +800,9 @@ module.exports = function(options) {
         "plugins/c9.ide.test/results",
         "plugins/c9.ide.test/coverage",
         "plugins/c9.ide.test/coverageview",
-        
+
         "plugins/c9.ide.test.mocha/mocha",
-        
+
         // git integration v2
         // {
         //     packagePath: "plugins/c9.ide.scm/scm.commit",
@@ -823,7 +823,7 @@ module.exports = function(options) {
         "plugins/c9.ide.scm/v1/log",
         "plugins/c9.ide.scm/v1/git",
         "plugins/c9.ide.scm/v1/editor",
-        
+
         // git integration
         "plugins/c9.ide.scm/mergetool",
 
@@ -867,10 +867,11 @@ module.exports = function(options) {
             packagePath: "plugins/ethergit.ethereum.sandbox/example",
             exampleProjectVersion: 1
         },
-        "plugins/ethereum.studio.oraclize/oraclize.js"
+        // Oraclize is not available publicly
+        //"plugins/ethereum.studio.oraclize/oraclize.js"
     ];
-    
-    
+
+
     if (packaging || !devel) {
         plugins.push({
             packagePath: "plugins/c9.ide.errorhandler/raygun_error_handler",
@@ -892,13 +893,13 @@ module.exports = function(options) {
             "plugins/c9.ide.services/linked-services-mock"
         );
     }
-    
+
     // Collab
     if (packaging || !collab) {
         plugins.push(
             "plugins/c9.ide.language.jsonalyzer/mock_collab"
         );
-    } 
+    }
     if (packaging || collab) {
         plugins.push(
         {
@@ -968,10 +969,3 @@ module.exports = function(options) {
 
     return plugins;
 };
-
-
-
-
-
-
-
